@@ -1,1 +1,2635 @@
-# anmol-2
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth"><head><script data-bard-client-injected="true">(function(firebaseConfig, initialAuthToken, appId) {
+        window.__firebase_config = firebaseConfig;
+        window.__initial_auth_token = initialAuthToken;
+        window.__app_id = appId;
+            })("\n{\n  \"apiKey\": \"AIzaSyCqyCcs2R2e7AegGjvFAwG98wlamtbHvZY\",\n  \"authDomain\": \"bard-frontend.firebaseapp.com\",\n  \"projectId\": \"bard-frontend\",\n  \"storageBucket\": \"bard-frontend.firebasestorage.app\",\n  \"messagingSenderId\": \"175205271074\",\n  \"appId\": \"1:175205271074:web:2b7bd4d34d33bf38e6ec7b\"\n}\n","eyJhbGciOiJSUzI1NiIsImtpZCI6IjExNjRiNzdiNDMzZDdhMDAyMWI4NjE4YjhjYTU3ZTMyZGI5MWUxMTMiLCJ0eXAiOiJKV1QifQ.eyJzdWIiOiJmaXJlYmFzZS1hZG1pbnNkay1mYnN2Y0BiYXJkLWZyb250ZW5kLmlhbS5nc2VydmljZWFjY291bnQuY29tIiwiYXVkIjoiaHR0cHM6Ly9pZGVudGl0eXRvb2xraXQuZ29vZ2xlYXBpcy5jb20vZ29vZ2xlLmlkZW50aXR5LmlkZW50aXR5dG9vbGtpdC52MS5JZGVudGl0eVRvb2xraXQiLCJ1aWQiOiIxNjIwMTM3NzcwMzUxMjYyNzA1NCIsImlzcyI6ImZpcmViYXNlLWFkbWluc2RrLWZic3ZjQGJhcmQtZnJvbnRlbmQuaWFtLmdzZXJ2aWNlYWNjb3VudC5jb20iLCJjbGFpbXMiOnsiYXBwSWQiOiJjXzZkZTFlZTU3ZmZkYmZiMTBfODkzNDQ2MjhfYW5tb2xfc29uaV9wb3J0Zm9saW8uaHRtbC04NzgifSwiZXhwIjoxNzk0NzgxNjYyLCJpYXQiOjE3OTQ3NzgwNjIsImFsZyI6IlJTMjU2In0.NZxzjvigFafmcjHwN3bDdJ683Baxz8TAqB1Kn9bjD3Gxq7RgEPTmamdbho8ioazzJyFDQQCGbESiyA7TQ4kuuhyNHrpI9_5GHETNkjTDwhnd5CAA3LY8qagk55D9n2F7FCqh5mmPHyhZY0QuJepxr387J9CTbGwFDQdadJEW5YfOTAVpqHaS7ryjIJRqqW6f6fuQXIyxglCCvZbGrRPxzabEpM-mb4ZYt3MvAjp2yIFNISvVjHbhjMEd0-_du8ZiaAWnOZ4G_Me5pJcuUD5N63wPJ-RUNPPsTlmiz_6zxXYxu11suxf1TpcLJTLhpOxMkPeQS4Du1tvR3gXIzz7fnA","c_6de1ee57ffdbfb10_89344628_anmol_soni_portfolio.html-878")</script><script data-bard-client-injected="true">
+  document.addEventListener('input', (event) => {
+    if (event.target && (event.target.isContentEditable || event.target.hasAttribute('contenteditable'))) {
+      const clonedDoc = document.cloneNode(true);
+      const injectedScripts = clonedDoc.querySelectorAll('[data-bard-client-injected="true"]');
+      injectedScripts.forEach(el => el.remove());
+      window.parent.postMessage({
+        type: 'inlineEdit',
+        html: '<!DOCTYPE html>\n' + clonedDoc.documentElement.outerHTML
+      }, '*');
+    }
+  });
+</script><script data-bard-client-injected="true">(function(){'use strict';window.addEventListener("message",a=>{a.data&&a.data.type==="SUPPLEMENTAL_DATA_UPDATE"&&window.dispatchEvent(new CustomEvent("supplementaldataupdate",{detail:a.data.data}))});}).call(this);
+</script><script data-bard-client-injected="true">(function() {
+  const SCROLL_KEYS = new Set([
+    'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight',
+    ' ', 'Spacebar', 'PageUp', 'PageDown', 'Home', 'End',
+  ]);
+  const HORIZONTAL_KEYS = new Set(['ArrowLeft', 'ArrowRight']);
+
+  function isTextEntryTarget(target) {
+    if (!target) return false;
+    const tagName = target.tagName;
+    return tagName === 'INPUT' || tagName === 'TEXTAREA' ||
+        tagName === 'SELECT' || target.isContentEditable === true;
+  }
+
+  // An element absorbs the key only if it both overflows on the axis being
+  // scrolled and is configured to scroll on that axis. The cheap dimension
+  // test runs first because getComputedStyle forces a style recalc, and this
+  // runs on every keypress. Each axis is read from its own longhand: the
+  // 'overflow' shorthand serializes as two values when the axes differ, which
+  // is the common 'overflow-x: hidden; overflow-y: auto' pane.
+  function canScroll(node, horizontal) {
+    const overflows = horizontal ? node.scrollWidth > node.clientWidth
+                                 : node.scrollHeight > node.clientHeight;
+    if (!overflows) return false;
+    const style = window.getComputedStyle(node);
+    const overflow = horizontal ? style.overflowX : style.overflowY;
+    return overflow === 'auto' || overflow === 'scroll';
+  }
+
+  // Walks up from the event target so nested scrollers keep their behavior.
+  // <body> is included because pages that pin the root height make it the
+  // scroll container.
+  function hasScrollableAncestor(target, horizontal) {
+    let node = target;
+    while (node && node !== document.documentElement) {
+      if (canScroll(node, horizontal)) return true;
+      node = node.parentElement;
+    }
+    return false;
+  }
+
+  function rootCanScroll(horizontal) {
+    const scroller = document.scrollingElement || document.documentElement;
+    if (!scroller) return false;
+    // Tolerate a pixel of rounding so subpixel layouts do not look scrollable.
+    return horizontal ? scroller.scrollWidth > window.innerWidth + 1
+                      : scroller.scrollHeight > window.innerHeight + 1;
+  }
+
+  window.addEventListener('keydown', function(event) {
+    if (!SCROLL_KEYS.has(event.key)) return;
+    if (event.defaultPrevented) return;
+    // Alt and Meta turn arrows into browser history navigation, and Ctrl is
+    // reserved for shortcuts, so none of them are scroll intent.
+    if (event.altKey || event.metaKey || event.ctrlKey) return;
+
+    const target = event.target;
+    if (isTextEntryTarget(target)) return;
+
+    // Anything that can still absorb the scroll gets to keep it.
+    const horizontal = HORIZONTAL_KEYS.has(event.key);
+    if (rootCanScroll(horizontal)) return;
+    if (hasScrollableAncestor(target, horizontal)) return;
+
+    event.preventDefault();
+  }, {capture: true, passive: false});
+})();</script><script data-bard-client-injected="true">(function() {
+  // Ensure this script is executed only once
+  if (window.firebaseAuthBridgeScriptLoaded) {
+    return;
+  }
+  window.firebaseAuthBridgeScriptLoaded = true;
+
+  let nextTokenPromiseId = 0;
+
+  // Stores { resolve, reject } for ongoing token requests
+  const pendingTokenPromises = {};
+
+  // Listen for messages from the Host Application
+  window.addEventListener('message', function(event) {
+
+    const messageData = event.data;
+
+  if (messageData && messageData.type === 'RESOLVE_NEW_FIREBASE_TOKEN') {
+      const { success, token, error, promiseId } = messageData ?? {};
+      if (pendingTokenPromises[promiseId]) {
+        if (success) {
+          pendingTokenPromises[promiseId].resolve(token);
+        } else {
+          pendingTokenPromises[promiseId].reject(new Error(error || 'Token refresh failed from host.'));
+        }
+        delete pendingTokenPromises[promiseId];
+      }
+    }
+  });
+
+  // Expose a function for the Generated App to request a new Firebase token
+  window.requestNewFirebaseToken = function() {
+    const currentPromiseId = nextTokenPromiseId++;
+    const promise = new Promise((resolve, reject) => {
+      pendingTokenPromises[currentPromiseId] = { resolve, reject };
+    });
+    if (window.parent && window.parent !== window) {
+      window.parent.postMessage({
+        type: 'REQUEST_NEW_FIREBASE_TOKEN',
+        promiseId: currentPromiseId
+      }, '*');
+    } else {
+      pendingTokenPromises[currentPromiseId].reject(new Error('No parent window to request token from.'));
+      delete pendingTokenPromises[currentPromiseId];
+    }
+    return promise;
+  };
+})();</script><script data-bard-client-injected="true">
+let realOriginalGetUserMedia = null;
+if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+  realOriginalGetUserMedia = navigator.mediaDevices.getUserMedia.bind(navigator.mediaDevices);
+}
+
+(function() {
+  if (navigator.mediaDevices && navigator.mediaDevices.__proto__) {
+    try {
+      Object.defineProperty(navigator.mediaDevices.__proto__, 'getUserMedia', {
+        get: function() {
+          return undefined; // Or throw an error
+        },
+        configurable: false
+      });
+    } catch (error) {
+      console.error("Error defining prototype getter:", error);
+    }
+  }
+})();
+
+(function() {
+  const pendingMediaResolvers = {};
+  let nextMediaPromiseId = 0;
+
+  function requestMediaPermissions(constraints) {
+    const mediaPromiseId = nextMediaPromiseId++;
+    const promise = new Promise((resolve, reject) => {
+      pendingMediaResolvers[mediaPromiseId] = (granted) => {
+        delete pendingMediaResolvers[mediaPromiseId];
+        resolve(granted);
+      };
+    });
+
+    window.parent.postMessage({
+      type: 'requestMediaPermission',
+      constraints: constraints,
+      promiseId: mediaPromiseId,
+    }, '*');
+
+    return promise;
+  }
+
+  let originalGetUserMedia = realOriginalGetUserMedia;
+
+  function interceptGetUserMedia() {
+    if (navigator.mediaDevices) {
+      Object.defineProperty(navigator.mediaDevices, 'getUserMedia', {
+        value: function(constraints) {
+          return requestMediaPermissions(constraints).then((granted) => {
+            if (granted) {
+              if (originalGetUserMedia) {
+                return originalGetUserMedia(constraints);
+              } else {
+                throw new Error("Original getUserMedia not available.");
+              }
+            } else {
+              throw new DOMException('Permission denied', 'NotAllowedError');
+            }
+          });
+        },
+        writable: false,
+        configurable: false
+      });
+    }
+  }
+
+  interceptGetUserMedia();
+
+  const observer = new MutationObserver(function(mutationsList, observer) {
+    for (const mutation of mutationsList) {
+      if (mutation.type === 'reconfigured' && mutation.name === 'getUserMedia' && mutation.object === navigator.mediaDevices) {
+        interceptGetUserMedia();
+      } else if (mutation.type === 'attributes' && mutation.attributeName === 'getUserMedia' && mutation.target === navigator.mediaDevices) {
+        interceptGetUserMedia();
+      } else if (mutation.type === 'childList' && mutation.addedNodes) {
+        mutation.addedNodes.forEach(node => {
+          if (node === navigator.mediaDevices) {
+            interceptGetUserMedia();
+          }
+        });
+      }
+    }
+  });
+
+  function interceptSpeechRecognition() {
+    if (!window.SpeechRecognition && !window.webkitSpeechRecognition) {
+      return;
+    }
+
+    const OriginalSpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    const SpeechRecognitionWrapper = function(...args) {
+      const recognizer = new OriginalSpeechRecognition(...args);
+      const originalStart = recognizer.start.bind(recognizer);
+
+      recognizer.start = function() {
+        requestMediaPermissions({ audio: true }).then(granted => {
+          if (granted) {
+            originalStart();
+          } else {
+            const errorEvent = new SpeechRecognitionErrorEvent('error');
+            errorEvent.error = 'not-allowed'; // This is the standard error for permission denial.
+            recognizer.dispatchEvent(errorEvent);
+          }
+        });
+      };
+
+      return recognizer;
+    };
+
+    SpeechRecognitionWrapper.prototype = OriginalSpeechRecognition.prototype;
+    SpeechRecognitionWrapper.prototype.constructor = SpeechRecognitionWrapper;
+
+    if (window.SpeechRecognition) {
+      window.SpeechRecognition = SpeechRecognitionWrapper;
+    }
+    if (window.webkitSpeechRecognition) {
+      window.webkitSpeechRecognition = SpeechRecognitionWrapper;
+    }
+  }
+
+  interceptSpeechRecognition();
+
+  window.addEventListener('message', function(event) {
+    if (event.data) {
+      if (event.data.type === 'resolveMediaPermission') {
+        const { promiseId, granted } = event.data;
+        if (pendingMediaResolvers[promiseId]) {
+          pendingMediaResolvers[promiseId](granted);
+        }
+      }
+    }
+  });
+
+})();</script><script ws-interception-config="{&quot;parentOrigin&quot;:&quot;https://gemini.google.com&quot;,&quot;proxiedDomains&quot;:[]}" data-bard-client-injected="true">(function(){'use strict';var u=typeof Object.defineProperties=="function"?Object.defineProperty:function(b,d,e){if(b==Array.prototype||b==Object.prototype)return b;b[d]=e.value;return b};function v(b){b=["object"==typeof globalThis&&globalThis,b,"object"==typeof window&&window,"object"==typeof self&&self,"object"==typeof global&&global];for(var d=0;d<b.length;++d){var e=b[d];if(e&&e.Math==Math)return e}throw Error("Cannot find global object");}var w=v(this);
+function y(b,d){if(d)a:{var e=w;b=b.split(".");for(var h=0;h<b.length-1;h++){var k=b[h];if(!(k in e))break a;e=e[k]}b=b[b.length-1];h=e[b];d=d(h);d!=h&&d!=null&&u(e,b,{configurable:!0,writable:!0,value:d})}}function z(b){function d(h){return b.next(h)}function e(h){return b.throw(h)}return new Promise(function(h,k){function m(n){n.done?h(n.value):Promise.resolve(n.value).then(d,e).then(m,k)}m(b.next())})}y("globalThis",function(b){return b||w});/*
+
+ Copyright The Closure Library Authors.
+ SPDX-License-Identifier: Apache-2.0
+*/
+function A(b,d){function e(){}e.prototype=d.prototype;b.j=d.prototype;b.prototype=new e;b.prototype.constructor=b;b.h=function(h,k,m){for(var n=Array(arguments.length-2),p=2;p<arguments.length;p++)n[p-2]=arguments[p];return d.prototype[k].apply(h,n)}};function B(b,d,e="*"){function h(a){if(typeof a==="string")return F.encode(a).buffer;if(a instanceof ArrayBuffer)return a.slice(0);if(ArrayBuffer.isView(a))return a.buffer.slice(a.byteOffset,a.byteOffset+a.byteLength);throw Error("Invalid data type");}function k(a){a=h(a);var f={type:"send",data:new Uint8Array(a)},g;(g=r)==null||g.postMessage(f,[a])}function m(){if(!r)throw Error("Data port not captured yet.");r.onmessage=a=>{if(a.data.type==="message"){a=new MessageEvent("message",{data:G.decode(a.data.data)});
+let f;(f=c.onmessage)==null||f.call(c,a);c.dispatchEvent(a)}}}function n(){if(!t)throw Error("Control port not captured yet.");t.onmessage=a=>{switch(a.data.type){case "open":l=1;var f=new Event("open"),g;(g=c.onopen)==null||g.call(c,f);c.dispatchEvent(f);q.forEach(H=>{k(H)});q=[];break;case "close":g=a.data;l=3;g=new CloseEvent("close",{code:g.code,reason:g.reason,wasClean:g.wasClean});(f=c.onclose)==null||f.call(c,g);c.dispatchEvent(g);break;case "error":l=3;f=new Event("error");let x;(x=c.onerror)==
+null||x.call(c,f);c.dispatchEvent(f)}}}function p(a){return z(function*(){var f=new MessageChannel;t=f.port1;var g=new MessageChannel;r=g.port1;n();m();window.parent.postMessage({type:"websocket_open",portOrdering:["control","data"],url:b,protocols:a||[],connectionId:I},e,[f.port2,g.port2])}())}var c=Reflect.construct(EventTarget,[],new.target);c.CONNECTING=0;c.OPEN=1;c.CLOSING=2;c.CLOSED=3;c.url=b;c.binaryType="arraybuffer";c.protocol="";c.i="";var l=0,t=null,r=null,q=[],F=new TextEncoder,G=new TextDecoder;
+c.onopen=null;c.onmessage=null;c.onclose=null;c.onerror=null;Object.defineProperty(c,"readyState",{get:()=>l,enumerable:!0,configurable:!0});Object.defineProperty(c,"bufferedAmount",{get:()=>{var a=0;q.forEach(f=>{a+=typeof f==="string"?f.length:f.byteLength});return a},enumerable:!0,configurable:!0});var I=function(){var a;return((a=globalThis.crypto)==null?0:a.randomUUID)?globalThis.crypto.randomUUID():"xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g,f=>{var g=Math.random()*16|0;return(f===
+"x"?g:g&3|8).toString(16)})}();c.send=a=>{if(l===1)a instanceof Blob?a.arrayBuffer().then(f=>{k(f)}):k(a);else if(l===0)if(typeof a==="string")q.push(a);else if(a instanceof ArrayBuffer||ArrayBuffer.isView(a))q.push(h(a));else throw Error("Sending Blob is not supported before the connection is open.");else console.debug("WebSocket send called in CLOSING or CLOSED state; ignored.")};c.close=(a=1E3,f="")=>{if(l!==2&&l!==3){l=2;a={type:"close",code:a,reason:f,wasClean:a===1E3};var g;(g=t)==null||g.postMessage(a)}};
+Promise.resolve().then(()=>p(d));return c}A(B,EventTarget);var C=document.currentScript,D=C==null?void 0:C.getAttribute("ws-interception-config");if(!D)throw Error("WebSocket Interceptor: Missing ws-interception-config attribute in the script tag.");var E=JSON.parse(D);if(!E.parentOrigin||typeof E.parentOrigin!=="string")throw Error("WebSocket Interceptor: Invalid parentOrigin in ws-interception-config");
+(function(b){var d=Object.getOwnPropertyDescriptor(window,"WebSocket");if(!d||d.writable||d.configurable)d=Object.assign(function(e,h){try{let k=(new URL(e)).hostname;if(b.proxiedDomains.some(m=>k===m||k.endsWith(`.${m}`)))return new B(e,h,b.parentOrigin)}catch(k){throw window.parent.postMessage({type:"websocket_blocked",url:e,reason:"blocked_invalid_url"},b.parentOrigin),new DOMException(`WebSocket connection to '${e}' is not allowed in Canvas.`,"SecurityError");}window.parent.postMessage({type:"websocket_blocked",
+url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMException(`WebSocket connection to '${e}' is not allowed in Canvas.`,"SecurityError");},{CONNECTING:0,OPEN:1,CLOSING:2,CLOSED:3}),Object.defineProperty(window,"WebSocket",{value:d,writable:!1,configurable:!1})})({proxiedDomains:E.proxiedDomains||[],parentOrigin:E.parentOrigin});}).call(this);
+</script><script data-bard-client-injected="true">((function(modelInformation) {
+  const originalFetch = window.fetch;
+  // TODO: b/421908508 - Move these out of the script and match all generative AI model calls.
+  let googleLlmBaseApiUrls = [
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.textModelName + ':streamGenerateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.textModelName + ':generateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageModelName + ':predict',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageModelName + ':predictLongRunning',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageEditModelName + ':generateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageTransformModelName + ':generateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.videoModelName + ':predict',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.videoModelName + ':predictLongRunning',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.ttsModelName + ':generateContent',
+  ];
+  modelInformation.deprecatedTextModelNames.forEach((modelName) => {
+    googleLlmBaseApiUrls.push(
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':streamGenerateContent',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent',
+    );
+  });
+  modelInformation.deprecatedImageModelNames.forEach((modelName) => {
+    googleLlmBaseApiUrls.push(
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':predict',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':predictLongRunning',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':streamGenerateContent',
+    );
+  });
+  modelInformation.deprecatedGenerateImageModelNames.forEach((modelName) => {
+    googleLlmBaseApiUrls.push(
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':streamGenerateContent',
+    );
+  });
+  modelInformation.deprecatedImageTransformModelNames.forEach((modelName) => {
+    googleLlmBaseApiUrls.push(
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':streamGenerateContent',
+    );
+  });
+
+  const pendingFetchResolvers = {};
+  let nextPromiseId = 0;
+
+  function handleStringInput(input, optionsArgument) {
+    const actualUrl = input;
+    const fetchCallArgs = [actualUrl, optionsArgument];
+    const effectiveOptions = optionsArgument || {};
+    const bodyForApiKeyCheck = effectiveOptions.body;
+    const bodyForPostMessage = effectiveOptions.body;
+    return { actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage };
+  }
+
+  function handleRequestInput(input, optionsArgument) {
+    const actualUrl = input.url;
+    const fetchCallArgs = [input, optionsArgument];
+    const effectiveOptions = { method: input.method, headers: new Headers(input.headers) };
+    let bodyForApiKeyCheck;
+    let bodyForPostMessage;
+
+    if (optionsArgument) {
+      if (optionsArgument.method) effectiveOptions.method = optionsArgument.method;
+      if (optionsArgument.headers) effectiveOptions.headers = new Headers(optionsArgument.headers);
+      if ('body' in optionsArgument) {
+        bodyForApiKeyCheck = optionsArgument.body;
+        bodyForPostMessage = optionsArgument.body;
+      } else {
+        bodyForApiKeyCheck = undefined;
+        bodyForPostMessage = input.body;
+      }
+    } else {
+      bodyForApiKeyCheck = undefined;
+      bodyForPostMessage = input.body;
+    }
+    return { actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage };
+  }
+
+  window.fetch = function(input, optionsArgument) {
+    let actualUrl;
+    let fetchCallArgs;
+    let effectiveOptions = {};
+    let bodyForApiKeyCheck;
+    let bodyForPostMessage;
+
+    if (typeof input === 'string') {
+      ({actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage} = handleStringInput(input, optionsArgument));
+    } else if (input instanceof Request) {
+      ({actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage} = handleRequestInput(input, optionsArgument));
+    } else {
+      return originalFetch.apply(window, [input, optionsArgument]);
+    }
+
+    effectiveOptions.method = effectiveOptions.method || 'GET';
+    if (!effectiveOptions.headers) {
+      effectiveOptions.headers = new Headers();
+    }
+
+
+    if (typeof actualUrl === 'string' && googleLlmBaseApiUrls.some((url) => actualUrl.startsWith(url))) {
+      let apiKeyIsNull = true;
+
+      const regex = new RegExp("models/([^:]+)");
+      const modelNameMatch = actualUrl.match(regex);
+      const modelName = modelNameMatch ? modelNameMatch[1] : 'unspecified';
+
+
+      try {
+        const urlObject = new URL(actualUrl);  // Use URL object for robust parsing
+        const apiKeyParam = urlObject.searchParams.get('key');
+        if (apiKeyParam) {
+          apiKeyIsNull = false;
+        }
+      } catch (e) {
+        // Continue checks even if URL parsing fails
+      }
+
+      if (apiKeyIsNull && effectiveOptions.headers) {
+        const h = new Headers(effectiveOptions.headers);
+        const apiKeyHeaderValue = h.get('X-API-Key') || h.get('x-api-key');
+        if (apiKeyHeaderValue) {
+          apiKeyIsNull = false;
+          return originalFetch.apply(window, fetchCallArgs);
+        }
+      }
+
+      if (apiKeyIsNull && effectiveOptions.method && ['POST', 'PUT', 'PATCH'].includes(effectiveOptions.method.toUpperCase()) && typeof bodyForApiKeyCheck === 'string') {
+        try {
+          const bodyData = JSON.parse(bodyForApiKeyCheck);
+          if (bodyData && bodyData.apiKey) {
+            apiKeyIsNull = false;
+            return originalFetch.apply(window, fetchCallArgs);
+          }
+        } catch (e) {
+          // Ignore JSON parsing errors
+        }
+      }
+
+      if(apiKeyIsNull) {
+        const promiseId = nextPromiseId++;
+        const promise = new Promise((resolve) => {
+          pendingFetchResolvers[promiseId] = (resolvedResponse) => {
+            delete pendingFetchResolvers[promiseId];
+            resolve(resolvedResponse);
+          };
+        });
+
+        let serializedBodyForPostMessage;
+        if (typeof bodyForPostMessage === 'string' || bodyForPostMessage == null) {
+            serializedBodyForPostMessage = bodyForPostMessage;
+        } else if (bodyForPostMessage instanceof ReadableStream) {
+            serializedBodyForPostMessage = null;
+        } else {
+            try {
+                serializedBodyForPostMessage = JSON.stringify(bodyForPostMessage);
+            } catch (e) {
+                serializedBodyForPostMessage = null;
+            }
+        }
+
+        const messageOptions = {
+            method: effectiveOptions.method,
+            headers: Object.fromEntries(new Headers(effectiveOptions.headers).entries()),
+            body: serializedBodyForPostMessage
+        };
+
+        window.parent.postMessage({
+          type: 'requestFetch',
+          url: actualUrl,
+          modelName: modelName,
+          options: messageOptions,
+          promiseId: promiseId,
+        }, '*');
+
+        return promise;
+      }
+      return originalFetch.apply(window, fetchCallArgs);
+    }
+    return originalFetch.apply(window, fetchCallArgs);
+  };
+
+  window.addEventListener('message', function(event) {
+    if (event.data && event.data.type === 'resolveFetch') {
+      const { promiseId, response } = event.data;
+      if (pendingFetchResolvers[promiseId]) {
+        try {
+          const reconstructedResponse = new Response(response.body, {
+            status: response.status,
+            statusText: response.statusText,
+            headers: new Headers(response.headers),
+          });
+          pendingFetchResolvers[promiseId](reconstructedResponse);
+        } catch (error) {
+          pendingFetchResolvers[promiseId](new Response(null, { status: 500, statusText: "Interceptor Response Reconstruction Error" }));
+        }
+      }
+    }
+  });
+
+}))({"textModelName":"gemini-3-flash-preview","imageModelName":"imagen-4.0-generate-001","imageEditModelName":"gemini-3.1-flash-image","imageTransformModelName":"gemini-3-pro-image","videoModelName":"veo-2.0-generate-001","ttsModelName":"gemini-2.5-flash-preview-tts","deprecatedTextModelNames":["gemini-2.0-flash","gemini-2.5-flash","gemini-2.5-flash-preview-04-17","gemini-2.5-flash-preview-05-20","gemini-2.5-flash-preview-09-2025"],"deprecatedImageModelNames":["imagen-3.0-generate-001","imagen-3.0-generate-002"],"deprecatedGenerateImageModelNames":["gemini-2.5-flash-image-preview","gemini-2.5-flash-image","gemini-3.1-flash-image-preview"],"deprecatedImageTransformModelNames":["gemini-3-pro-image-preview-11-2025"]})</script><script data-bard-client-injected="true">(function() {
+  function normalizeSlug(str) {
+    try {
+      return str
+        .trim()
+        .toLowerCase()
+        .replace(/[^p{L}p{N}s_-]/gu, '')
+        .replace(/s+/g, '-');
+    } catch (e) {
+      return str
+        .trim()
+        .toLowerCase()
+        .replace(/[^a-z0-9s_-]/g, '')
+        .replace(/s+/g, '-');
+    }
+  }
+
+  function findTargetElement(hash) {
+    if (!hash || hash === '#') {
+      return null;
+    }
+    const rawId = hash.startsWith('#') ? hash.slice(1) : hash;
+    let decodedId = rawId;
+    try {
+      decodedId = decodeURIComponent(rawId);
+    } catch (e) {
+      // Ignore URI malformed errors.
+    }
+
+    // 1. Direct ID match (raw and decoded).
+    let target = document.getElementById(rawId) || document.getElementById(decodedId);
+    if (target) {
+      return target;
+    }
+
+    // 2. Name attribute match (<a name="...">).
+    try {
+      if (typeof CSS !== 'undefined' && CSS.escape) {
+        target =
+          document.querySelector('[name="' + CSS.escape(rawId) + '"]') ||
+          document.querySelector('[name="' + CSS.escape(decodedId) + '"]');
+      } else {
+        const namedElements = document.getElementsByName(rawId);
+        if (namedElements && namedElements.length > 0) {
+          return namedElements[0];
+        }
+      }
+    } catch (e) {
+      // Ignore querySelector syntax errors.
+    }
+    if (target) {
+      return target;
+    }
+
+    // 3. Match heading text by slug (for Markdown TOCs where headings lack explicit IDs).
+    const targetSlug = normalizeSlug(decodedId);
+    if (targetSlug) {
+      for (const heading of document.querySelectorAll('h1, h2, h3, h4, h5, h6')) {
+        if (normalizeSlug(heading.textContent || '') === targetSlug) {
+          return heading;
+        }
+      }
+    }
+
+    return null;
+  }
+
+  document.addEventListener('click', function(event) {
+    const target = event.target;
+    const anchor = target && typeof target.closest === 'function' ? target.closest('a') : null;
+    if (!anchor) {
+      return;
+    }
+
+    const href = anchor.getAttribute('href');
+    if (
+      !href ||
+      href.trim().toLowerCase().startsWith('javascript:') ||
+      anchor.hasAttribute('download')
+    ) {
+      return;
+    }
+
+    // Check if the link is an in-page hash / anchor link.
+    if (href.startsWith('#')) {
+      event.preventDefault();
+      const targetElement = findTargetElement(href);
+      if (targetElement) {
+        targetElement.scrollIntoView({behavior: 'smooth', block: 'start'});
+      }
+      return;
+    }
+
+    // Check if the URL has the same origin/pathname but with a hash.
+    try {
+      const url = new URL(anchor.href, window.location.href);
+      if (
+        url.hash &&
+        url.origin === window.location.origin &&
+        url.pathname === window.location.pathname
+      ) {
+        event.preventDefault();
+        const targetElement = findTargetElement(url.hash);
+        if (targetElement) {
+          targetElement.scrollIntoView({behavior: 'smooth', block: 'start'});
+        }
+        return;
+      }
+    } catch (e) {
+      // Fall through if URL parsing fails.
+    }
+
+    // For all external or full navigation links, prevent iframe-level navigation
+    // (which breaks in AGSA WebView or sandboxed iframes) and ensure they open
+    // safely in a new tab/window.
+    if (anchor.target !== '_blank') {
+      event.preventDefault();
+      window.open(anchor.href, '_blank', 'noopener,noreferrer');
+    }
+  }, {capture: true});
+})();</script><script data-bard-client-injected="true">(function(){'use strict';function a(){window.parent.postMessage({type:"interaction"},"*")}window.addEventListener("click",a,{capture:!0,passive:!0});window.addEventListener("touchstart",a,{capture:!0,passive:!0});window.addEventListener("keydown",a,{capture:!0,passive:!0});}).call(this);
+</script><script data-bard-client-injected="true">(function() {
+  const originalConsoleLog = console.log;
+  const originalConsoleError = console.error;
+
+    /**
+   * Normalizes an error event or a promise rejection reason into a structured error object.
+   * @param {*} errorEventOrReason The error object or reason.
+   * @return {object} Structured error data { message, name, stack }.
+   */
+  function getErrorObject(errorEventOrReason) {
+    if (errorEventOrReason instanceof Error) {
+      return {
+        message: errorEventOrReason.message,
+        name: errorEventOrReason.name,
+        stack: errorEventOrReason.stack,
+      };
+    }
+    // Fallback for non-Error objects.
+    try {
+      return {
+        message: JSON.stringify(errorEventOrReason),
+        name: 'UnknownErrorType',
+        stack: null,
+      };
+    } catch (e) {
+      return {
+        message: String(errorEventOrReason),
+        name: 'UnknownErrorTypeNonStringifiable',
+        stack: null,
+      };
+    }
+  }
+
+  /**
+   * Converts an array of arguments (from log/error) into a single string.
+   * Handles Error objects specially to include their message and stack.
+   * @param {Array<*>} args - Arguments passed to console methods.
+   * @return {string} A string representation of the arguments.
+   */
+  function stringifyArgs(args) {
+    return args
+      .map((arg) => {
+        if (arg instanceof Error) {
+          const {message, stack} = arg;
+          return `Error: ${message}${stack ? ('\nStack: ' + stack) : ''}`;
+        }
+        if (typeof arg === 'object' && arg !== null) {
+          try {
+            return JSON.stringify(arg);
+          } catch (error) {
+            return '[Circular Object]';
+          }
+        } else {
+          return String(arg);
+        }
+      })
+      .join(' ');
+  }
+
+  console.log = function(...args) {
+    const logString = stringifyArgs(args);
+    window.parent.postMessage({ type: 'log', message: logString }, '*');
+    originalConsoleLog.apply(console, args);
+  };
+
+  console.error = function(...args) {
+    let errorData;
+    if (args.length > 0 && args[0] instanceof Error) {
+      const err = args[0];
+      // If the first arg is an Error, capture its details.
+      errorData = {
+        type: 'error',
+        source: 'CONSOLE_ERROR',
+        ...getErrorObject(err),
+        rawArgsString: stringifyArgs(args.slice(1)),
+        timestamp: new Date().toISOString(),
+      };
+    } else {
+      // If not an Error object, treat all args as a general error message.
+      errorData = {
+        type: 'error',
+        source: 'CONSOLE_ERROR',
+        message: stringifyArgs(args),
+        name: 'ConsoleLoggedError',
+        stack: null,
+        timestamp: new Date().toISOString(),
+      };
+    }
+    window.parent.postMessage(errorData, '*');
+    originalConsoleError.apply(console, args);
+  };
+
+  // Listen for global unhandled synchronous errors.
+  window.addEventListener('error', function(event) {
+    const errorDetails = event.error ? getErrorObject(event.error) : {
+      message: event.message,
+      name: 'GlobalError',
+      stack: null,
+      filename: event.filename,
+      lineno: event.lineno,
+      colno: event.colno,
+    };
+
+    window.parent.postMessage({
+      type: 'error',
+      source: 'global',
+      ...errorDetails,
+      message: errorDetails.message || event.message,
+      timestamp: new Date().toISOString(),
+    }, '*');
+  });
+
+  // Listen for unhandled promise rejections (asynchronous errors).
+  window.addEventListener('unhandledrejection', function(event) {
+    const errorDetails = getErrorObject(event.reason);
+
+    window.parent.postMessage({
+      type: 'error',
+      source: 'unhandledrejection',
+      ...errorDetails,
+      message: errorDetails.message || 'Unhandled Promise Rejection',
+      timestamp: new Date().toISOString(),
+    }, '*');
+  });
+
+})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Anmol Soni — Coder, Data Analytics &amp; Creative Technologist Portfolio</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" crossorigin="anonymous"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace']
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    :root {
+      --bg-primary: #09090b;
+      --bg-secondary: #121215;
+      --bg-card: #18181b;
+      --text-primary: #fafafa;
+      --text-secondary: #a1a1aa;
+      --border-color: #27272a;
+      --accent-color: #ffffff;
+      --accent-fg: #09090b;
+      --badge-bg: #27272a;
+    }
+    body.theme-light {
+      --bg-primary: #fafafa;
+      --bg-secondary: #f4f4f5;
+      --bg-card: #ffffff;
+      --text-primary: #09090b;
+      --text-secondary: #52525b;
+      --border-color: #e4e4e7;
+      --accent-color: #09090b;
+      --accent-fg: #ffffff;
+      --badge-bg: #f4f4f5;
+    }
+    body.theme-emerald {
+      --bg-primary: #060d0a;
+      --bg-secondary: #0b1712;
+      --bg-card: #10211a;
+      --text-primary: #ecfdf5;
+      --text-secondary: #6ee7b7;
+      --border-color: #1f3a2e;
+      --accent-color: #10b981;
+      --accent-fg: #052e16;
+      --badge-bg: #142e24;
+    }
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: 'Inter', system-ui, sans-serif;
+      transition: background-color 0.25s ease, color 0.25s ease;
+    }
+    .surface-secondary {
+      background-color: var(--bg-secondary);
+    }
+    .surface-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+    }
+    .text-muted {
+      color: var(--text-secondary);
+    }
+    .border-subtle {
+      border-color: var(--border-color);
+    }
+    .btn-accent {
+      background-color: var(--accent-color);
+      color: var(--accent-fg);
+    }
+    .btn-accent:hover {
+      opacity: 0.9;
+    }
+    .badge-surface {
+      background-color: var(--badge-bg);
+      border: 1px solid var(--border-color);
+    }
+    .grid-backdrop {
+      background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+    body.theme-light .grid-backdrop {
+      background-image: radial-gradient(rgba(0, 0, 0, 0.08) 1px, transparent 1px);
+    }
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--bg-primary);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--border-color);
+      border-radius: 3px;
+    }
+  </style>
+<style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:Inter, system-ui, sans-serif;font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:JetBrains Mono, monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.pointer-events-none{pointer-events:none}.pointer-events-auto{pointer-events:auto}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.sticky{position:sticky}.inset-0{inset:0px}.bottom-5{bottom:1.25rem}.left-0{left:0px}.right-5{right:1.25rem}.top-0{top:0px}.top-0\.5{top:0.125rem}.z-40{z-index:40}.z-50{z-index:50}.mx-auto{margin-left:auto;margin-right:auto}.mb-1{margin-bottom:0.25rem}.ml-2{margin-left:0.5rem}.mr-1{margin-right:0.25rem}.mt-0\.5{margin-top:0.125rem}.mt-1{margin-top:0.25rem}.mt-1\.5{margin-top:0.375rem}.mt-2{margin-top:0.5rem}.block{display:block}.flex{display:flex}.inline-flex{display:inline-flex}.grid{display:grid}.hidden{display:none}.h-16{height:4rem}.h-2{height:0.5rem}.h-3{height:0.75rem}.h-3\.5{height:0.875rem}.h-4{height:1rem}.h-5{height:1.25rem}.h-6{height:1.5rem}.h-72{height:18rem}.h-9{height:2.25rem}.h-1\.5{height:0.375rem}.h-full{height:100%}.max-h-\[90vh\]{max-height:90vh}.min-h-screen{min-height:100vh}.w-2{width:0.5rem}.w-3{width:0.75rem}.w-3\.5{width:0.875rem}.w-4{width:1rem}.w-48{width:12rem}.w-5{width:1.25rem}.w-6{width:1.5rem}.w-9{width:2.25rem}.w-full{width:100%}.max-w-2xl{max-width:42rem}.max-w-3xl{max-width:48rem}.max-w-7xl{max-width:80rem}.max-w-md{max-width:28rem}.shrink-0{flex-shrink:0}.border-collapse{border-collapse:collapse}@keyframes pulse{50%{opacity:.5}}.animate-pulse{animation:pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite}.grid-cols-1{grid-template-columns:repeat(1, minmax(0, 1fr))}.grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-start{align-items:flex-start}.items-center{align-items:center}.items-stretch{align-items:stretch}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-1{gap:0.25rem}.gap-1\.5{gap:0.375rem}.gap-10{gap:2.5rem}.gap-2{gap:0.5rem}.gap-3{gap:0.75rem}.gap-4{gap:1rem}.gap-5{gap:1.25rem}.gap-6{gap:1.5rem}.gap-8{gap:2rem}.space-y-1 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.25rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.25rem * var(--tw-space-y-reverse))}.space-y-10 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(2.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(2.5rem * var(--tw-space-y-reverse))}.space-y-2 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.5rem * var(--tw-space-y-reverse))}.space-y-2\.5 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.625rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.625rem * var(--tw-space-y-reverse))}.space-y-3 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.75rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.75rem * var(--tw-space-y-reverse))}.space-y-4 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1rem * var(--tw-space-y-reverse))}.space-y-5 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1.25rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1.25rem * var(--tw-space-y-reverse))}.space-y-6 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1.5rem * var(--tw-space-y-reverse))}.space-y-8 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(2rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(2rem * var(--tw-space-y-reverse))}.divide-y > :not([hidden]) ~ :not([hidden]){--tw-divide-y-reverse:0;border-top-width:calc(1px * calc(1 - var(--tw-divide-y-reverse)));border-bottom-width:calc(1px * var(--tw-divide-y-reverse))}.divide-zinc-800\/50 > :not([hidden]) ~ :not([hidden]){border-color:rgb(39 39 42 / 0.5)}.overflow-hidden{overflow:hidden}.overflow-x-auto{overflow-x:auto}.overflow-y-auto{overflow-y:auto}.scroll-smooth{scroll-behavior:smooth}.break-all{word-break:break-all}.rounded{border-radius:0.25rem}.rounded-2xl{border-radius:1rem}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:0.5rem}.rounded-md{border-radius:0.375rem}.rounded-xl{border-radius:0.75rem}.border{border-width:1px}.border-b{border-bottom-width:1px}.border-l-2{border-left-width:2px}.border-t{border-top-width:1px}.bg-amber-500\/80{background-color:rgb(245 158 11 / 0.8)}.bg-black\/75{background-color:rgb(0 0 0 / 0.75)}.bg-emerald-400{--tw-bg-opacity:1;background-color:rgb(52 211 153 / var(--tw-bg-opacity, 1))}.bg-emerald-500\/80{background-color:rgb(16 185 129 / 0.8)}.bg-rose-500\/80{background-color:rgb(244 63 94 / 0.8)}.bg-transparent{background-color:transparent}.bg-opacity-80{--tw-bg-opacity:0.8}.p-0\.5{padding:0.125rem}.p-2{padding:0.5rem}.p-3\.5{padding:0.875rem}.p-4{padding:1rem}.p-5{padding:1.25rem}.p-6{padding:1.5rem}.px-2{padding-left:0.5rem;padding-right:0.5rem}.px-2\.5{padding-left:0.625rem;padding-right:0.625rem}.px-3{padding-left:0.75rem;padding-right:0.75rem}.px-3\.5{padding-left:0.875rem;padding-right:0.875rem}.px-4{padding-left:1rem;padding-right:1rem}.px-5{padding-left:1.25rem;padding-right:1.25rem}.py-0\.5{padding-top:0.125rem;padding-bottom:0.125rem}.py-1{padding-top:0.25rem;padding-bottom:0.25rem}.py-1\.5{padding-top:0.375rem;padding-bottom:0.375rem}.py-16{padding-top:4rem;padding-bottom:4rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.py-2\.5{padding-top:0.625rem;padding-bottom:0.625rem}.py-3{padding-top:0.75rem;padding-bottom:0.75rem}.py-8{padding-top:2rem;padding-bottom:2rem}.pb-1{padding-bottom:0.25rem}.pb-16{padding-bottom:4rem}.pb-4{padding-bottom:1rem}.pl-3{padding-left:0.75rem}.pl-9{padding-left:2.25rem}.pr-3{padding-right:0.75rem}.pt-1{padding-top:0.25rem}.pt-10{padding-top:2.5rem}.pt-2{padding-top:0.5rem}.pt-3{padding-top:0.75rem}.pt-4{padding-top:1rem}.text-left{text-align:left}.font-mono{font-family:JetBrains Mono, monospace}.text-2xl{font-size:1.5rem;line-height:2rem}.text-3xl{font-size:1.875rem;line-height:2.25rem}.text-\[10px\]{font-size:10px}.text-\[11px\]{font-size:11px}.text-base{font-size:1rem;line-height:1.5rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:0.75rem;line-height:1rem}.font-bold{font-weight:700}.font-extrabold{font-weight:800}.font-medium{font-weight:500}.font-semibold{font-weight:600}.uppercase{text-transform:uppercase}.leading-\[1\.1\]{line-height:1.1}.leading-none{line-height:1}.leading-relaxed{line-height:1.625}.leading-snug{line-height:1.375}.tracking-tight{letter-spacing:-0.025em}.tracking-tighter{letter-spacing:-0.05em}.tracking-wider{letter-spacing:0.05em}.tracking-widest{letter-spacing:0.1em}.text-emerald-400{--tw-text-opacity:1;color:rgb(52 211 153 / var(--tw-text-opacity, 1))}.text-rose-400{--tw-text-opacity:1;color:rgb(251 113 133 / var(--tw-text-opacity, 1))}.underline{-webkit-text-decoration-line:underline;text-decoration-line:underline}.antialiased{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}.shadow-2xl{--tw-shadow:0 25px 50px -12px rgb(0 0 0 / 0.25);--tw-shadow-colored:0 25px 50px -12px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-sm{--tw-shadow:0 1px 2px 0 rgb(0 0 0 / 0.05);--tw-shadow-colored:0 1px 2px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-lg{--tw-shadow:0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.backdrop-blur-md{--tw-backdrop-blur:blur(12px);-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.backdrop-blur-sm{--tw-backdrop-blur:blur(4px);-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.transition{transition-property:color, background-color, border-color, fill, stroke, opacity, box-shadow, transform, filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-all{transition-property:all;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.duration-500{transition-duration:500ms}.duration-300{transition-duration:300ms}.selection\:bg-white *::selection{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.selection\:text-black *::selection{--tw-text-opacity:1;color:rgb(0 0 0 / var(--tw-text-opacity, 1))}.selection\:bg-white::selection{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.selection\:text-black::selection{--tw-text-opacity:1;color:rgb(0 0 0 / var(--tw-text-opacity, 1))}.before\:absolute::before{content:var(--tw-content);position:absolute}.before\:bottom-2::before{content:var(--tw-content);bottom:0.5rem}.before\:left-3::before{content:var(--tw-content);left:0.75rem}.before\:top-2::before{content:var(--tw-content);top:0.5rem}.before\:w-px::before{content:var(--tw-content);width:1px}.before\:bg-zinc-700\/60::before{content:var(--tw-content);background-color:rgb(63 63 70 / 0.6)}.hover\:border-zinc-500:hover{--tw-border-opacity:1;border-color:rgb(113 113 122 / var(--tw-border-opacity, 1))}.hover\:bg-zinc-800\/40:hover{background-color:rgb(39 39 42 / 0.4)}.hover\:underline:hover{-webkit-text-decoration-line:underline;text-decoration-line:underline}.hover\:opacity-80:hover{opacity:0.8}.hover\:opacity-85:hover{opacity:0.85}.focus\:outline-none:focus{outline:2px solid transparent;outline-offset:2px}@media (min-width: 640px){.sm\:flex{display:flex}.sm\:w-56{width:14rem}.sm\:grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.sm\:grid-cols-3{grid-template-columns:repeat(3, minmax(0, 1fr))}.sm\:grid-cols-4{grid-template-columns:repeat(4, minmax(0, 1fr))}.sm\:flex-row{flex-direction:row}.sm\:px-6{padding-left:1.5rem;padding-right:1.5rem}.sm\:text-2xl{font-size:1.5rem;line-height:2rem}.sm\:text-4xl{font-size:2.25rem;line-height:2.5rem}.sm\:text-5xl{font-size:3rem;line-height:1}.sm\:text-base{font-size:1rem;line-height:1.5rem}.sm\:text-lg{font-size:1.125rem;line-height:1.75rem}.sm\:text-sm{font-size:0.875rem;line-height:1.25rem}}@media (min-width: 768px){.md\:flex{display:flex}.md\:hidden{display:none}.md\:grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.md\:flex-row{flex-direction:row}.md\:items-end{align-items:flex-end}}@media (min-width: 1024px){.lg\:col-span-5{grid-column:span 5 / span 5}.lg\:col-span-6{grid-column:span 6 / span 6}.lg\:col-span-7{grid-column:span 7 / span 7}.lg\:grid-cols-12{grid-template-columns:repeat(12, minmax(0, 1fr))}.lg\:grid-cols-3{grid-template-columns:repeat(3, minmax(0, 1fr))}.lg\:grid-cols-4{grid-template-columns:repeat(4, minmax(0, 1fr))}.lg\:flex-row{flex-direction:row}.lg\:items-end{align-items:flex-end}.lg\:gap-2{gap:0.5rem}.lg\:px-8{padding-left:2rem;padding-right:2rem}.lg\:py-20{padding-top:5rem;padding-bottom:5rem}.lg\:text-6xl{font-size:3.75rem;line-height:1}}</style><style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:Inter, system-ui, sans-serif;font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:JetBrains Mono, monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.pointer-events-none{pointer-events:none}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.sticky{position:sticky}.inset-0{inset:0px}.bottom-5{bottom:1.25rem}.left-0{left:0px}.right-5{right:1.25rem}.top-0{top:0px}.top-0\.5{top:0.125rem}.z-40{z-index:40}.z-50{z-index:50}.mx-auto{margin-left:auto;margin-right:auto}.mb-1{margin-bottom:0.25rem}.ml-2{margin-left:0.5rem}.mr-1{margin-right:0.25rem}.mt-0\.5{margin-top:0.125rem}.mt-1{margin-top:0.25rem}.mt-1\.5{margin-top:0.375rem}.mt-2{margin-top:0.5rem}.block{display:block}.flex{display:flex}.inline-flex{display:inline-flex}.grid{display:grid}.hidden{display:none}.h-1\.5{height:0.375rem}.h-16{height:4rem}.h-2{height:0.5rem}.h-3{height:0.75rem}.h-3\.5{height:0.875rem}.h-4{height:1rem}.h-5{height:1.25rem}.h-6{height:1.5rem}.h-72{height:18rem}.h-9{height:2.25rem}.h-full{height:100%}.max-h-\[90vh\]{max-height:90vh}.min-h-screen{min-height:100vh}.w-2{width:0.5rem}.w-3{width:0.75rem}.w-3\.5{width:0.875rem}.w-4{width:1rem}.w-48{width:12rem}.w-5{width:1.25rem}.w-6{width:1.5rem}.w-9{width:2.25rem}.w-full{width:100%}.max-w-2xl{max-width:42rem}.max-w-3xl{max-width:48rem}.max-w-7xl{max-width:80rem}.max-w-md{max-width:28rem}.shrink-0{flex-shrink:0}.border-collapse{border-collapse:collapse}@keyframes pulse{50%{opacity:.5}}.animate-pulse{animation:pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite}.grid-cols-1{grid-template-columns:repeat(1, minmax(0, 1fr))}.grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-start{align-items:flex-start}.items-center{align-items:center}.items-stretch{align-items:stretch}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-1{gap:0.25rem}.gap-1\.5{gap:0.375rem}.gap-10{gap:2.5rem}.gap-2{gap:0.5rem}.gap-3{gap:0.75rem}.gap-4{gap:1rem}.gap-5{gap:1.25rem}.gap-6{gap:1.5rem}.gap-8{gap:2rem}.space-y-1 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.25rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.25rem * var(--tw-space-y-reverse))}.space-y-10 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(2.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(2.5rem * var(--tw-space-y-reverse))}.space-y-2 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.5rem * var(--tw-space-y-reverse))}.space-y-2\.5 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.625rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.625rem * var(--tw-space-y-reverse))}.space-y-3 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.75rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.75rem * var(--tw-space-y-reverse))}.space-y-4 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1rem * var(--tw-space-y-reverse))}.space-y-5 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1.25rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1.25rem * var(--tw-space-y-reverse))}.space-y-6 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1.5rem * var(--tw-space-y-reverse))}.space-y-8 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(2rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(2rem * var(--tw-space-y-reverse))}.divide-y > :not([hidden]) ~ :not([hidden]){--tw-divide-y-reverse:0;border-top-width:calc(1px * calc(1 - var(--tw-divide-y-reverse)));border-bottom-width:calc(1px * var(--tw-divide-y-reverse))}.divide-zinc-800\/50 > :not([hidden]) ~ :not([hidden]){border-color:rgb(39 39 42 / 0.5)}.overflow-hidden{overflow:hidden}.overflow-x-auto{overflow-x:auto}.overflow-y-auto{overflow-y:auto}.scroll-smooth{scroll-behavior:smooth}.break-all{word-break:break-all}.rounded{border-radius:0.25rem}.rounded-2xl{border-radius:1rem}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:0.5rem}.rounded-md{border-radius:0.375rem}.rounded-xl{border-radius:0.75rem}.border{border-width:1px}.border-b{border-bottom-width:1px}.border-l-2{border-left-width:2px}.border-t{border-top-width:1px}.bg-amber-500\/80{background-color:rgb(245 158 11 / 0.8)}.bg-black\/75{background-color:rgb(0 0 0 / 0.75)}.bg-emerald-400{--tw-bg-opacity:1;background-color:rgb(52 211 153 / var(--tw-bg-opacity, 1))}.bg-emerald-500\/80{background-color:rgb(16 185 129 / 0.8)}.bg-rose-500\/80{background-color:rgb(244 63 94 / 0.8)}.bg-transparent{background-color:transparent}.bg-opacity-80{--tw-bg-opacity:0.8}.p-0\.5{padding:0.125rem}.p-2{padding:0.5rem}.p-3\.5{padding:0.875rem}.p-4{padding:1rem}.p-5{padding:1.25rem}.p-6{padding:1.5rem}.px-2{padding-left:0.5rem;padding-right:0.5rem}.px-2\.5{padding-left:0.625rem;padding-right:0.625rem}.px-3{padding-left:0.75rem;padding-right:0.75rem}.px-3\.5{padding-left:0.875rem;padding-right:0.875rem}.px-4{padding-left:1rem;padding-right:1rem}.px-5{padding-left:1.25rem;padding-right:1.25rem}.py-0\.5{padding-top:0.125rem;padding-bottom:0.125rem}.py-1{padding-top:0.25rem;padding-bottom:0.25rem}.py-1\.5{padding-top:0.375rem;padding-bottom:0.375rem}.py-16{padding-top:4rem;padding-bottom:4rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.py-2\.5{padding-top:0.625rem;padding-bottom:0.625rem}.py-3{padding-top:0.75rem;padding-bottom:0.75rem}.py-8{padding-top:2rem;padding-bottom:2rem}.pb-1{padding-bottom:0.25rem}.pb-16{padding-bottom:4rem}.pb-4{padding-bottom:1rem}.pl-3{padding-left:0.75rem}.pl-9{padding-left:2.25rem}.pr-3{padding-right:0.75rem}.pt-1{padding-top:0.25rem}.pt-10{padding-top:2.5rem}.pt-2{padding-top:0.5rem}.pt-3{padding-top:0.75rem}.pt-4{padding-top:1rem}.text-left{text-align:left}.font-mono{font-family:JetBrains Mono, monospace}.text-2xl{font-size:1.5rem;line-height:2rem}.text-3xl{font-size:1.875rem;line-height:2.25rem}.text-\[10px\]{font-size:10px}.text-\[11px\]{font-size:11px}.text-base{font-size:1rem;line-height:1.5rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:0.75rem;line-height:1rem}.font-bold{font-weight:700}.font-extrabold{font-weight:800}.font-medium{font-weight:500}.font-semibold{font-weight:600}.uppercase{text-transform:uppercase}.leading-\[1\.1\]{line-height:1.1}.leading-none{line-height:1}.leading-relaxed{line-height:1.625}.leading-snug{line-height:1.375}.tracking-tight{letter-spacing:-0.025em}.tracking-tighter{letter-spacing:-0.05em}.tracking-wider{letter-spacing:0.05em}.tracking-widest{letter-spacing:0.1em}.text-emerald-400{--tw-text-opacity:1;color:rgb(52 211 153 / var(--tw-text-opacity, 1))}.text-rose-400{--tw-text-opacity:1;color:rgb(251 113 133 / var(--tw-text-opacity, 1))}.underline{-webkit-text-decoration-line:underline;text-decoration-line:underline}.antialiased{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}.shadow-2xl{--tw-shadow:0 25px 50px -12px rgb(0 0 0 / 0.25);--tw-shadow-colored:0 25px 50px -12px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-sm{--tw-shadow:0 1px 2px 0 rgb(0 0 0 / 0.05);--tw-shadow-colored:0 1px 2px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.backdrop-blur-md{--tw-backdrop-blur:blur(12px);-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.backdrop-blur-sm{--tw-backdrop-blur:blur(4px);-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.transition{transition-property:color, background-color, border-color, fill, stroke, opacity, box-shadow, transform, filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-all{transition-property:all;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.duration-500{transition-duration:500ms}.selection\:bg-white *::selection{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.selection\:text-black *::selection{--tw-text-opacity:1;color:rgb(0 0 0 / var(--tw-text-opacity, 1))}.selection\:bg-white::selection{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.selection\:text-black::selection{--tw-text-opacity:1;color:rgb(0 0 0 / var(--tw-text-opacity, 1))}.before\:absolute::before{content:var(--tw-content);position:absolute}.before\:bottom-2::before{content:var(--tw-content);bottom:0.5rem}.before\:left-3::before{content:var(--tw-content);left:0.75rem}.before\:top-2::before{content:var(--tw-content);top:0.5rem}.before\:w-px::before{content:var(--tw-content);width:1px}.before\:bg-zinc-700\/60::before{content:var(--tw-content);background-color:rgb(63 63 70 / 0.6)}.hover\:border-zinc-500:hover{--tw-border-opacity:1;border-color:rgb(113 113 122 / var(--tw-border-opacity, 1))}.hover\:bg-zinc-800\/40:hover{background-color:rgb(39 39 42 / 0.4)}.hover\:underline:hover{-webkit-text-decoration-line:underline;text-decoration-line:underline}.hover\:opacity-80:hover{opacity:0.8}.hover\:opacity-85:hover{opacity:0.85}.focus\:outline-none:focus{outline:2px solid transparent;outline-offset:2px}@media (min-width: 640px){.sm\:flex{display:flex}.sm\:w-56{width:14rem}.sm\:grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.sm\:grid-cols-3{grid-template-columns:repeat(3, minmax(0, 1fr))}.sm\:grid-cols-4{grid-template-columns:repeat(4, minmax(0, 1fr))}.sm\:flex-row{flex-direction:row}.sm\:px-6{padding-left:1.5rem;padding-right:1.5rem}.sm\:text-2xl{font-size:1.5rem;line-height:2rem}.sm\:text-4xl{font-size:2.25rem;line-height:2.5rem}.sm\:text-5xl{font-size:3rem;line-height:1}.sm\:text-base{font-size:1rem;line-height:1.5rem}.sm\:text-lg{font-size:1.125rem;line-height:1.75rem}.sm\:text-sm{font-size:0.875rem;line-height:1.25rem}}@media (min-width: 768px){.md\:flex{display:flex}.md\:hidden{display:none}.md\:grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.md\:flex-row{flex-direction:row}.md\:items-end{align-items:flex-end}}@media (min-width: 1024px){.lg\:col-span-5{grid-column:span 5 / span 5}.lg\:col-span-6{grid-column:span 6 / span 6}.lg\:col-span-7{grid-column:span 7 / span 7}.lg\:grid-cols-12{grid-template-columns:repeat(12, minmax(0, 1fr))}.lg\:grid-cols-3{grid-template-columns:repeat(3, minmax(0, 1fr))}.lg\:grid-cols-4{grid-template-columns:repeat(4, minmax(0, 1fr))}.lg\:flex-row{flex-direction:row}.lg\:items-end{align-items:flex-end}.lg\:gap-2{gap:0.5rem}.lg\:px-8{padding-left:2rem;padding-right:2rem}.lg\:py-20{padding-top:5rem;padding-bottom:5rem}.lg\:text-6xl{font-size:3.75rem;line-height:1}}</style></head>
+<body class="min-h-screen antialiased selection:bg-white selection:text-black">
+
+  <!-- Toast Notification -->
+  <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <!-- Top Navigation Header -->
+  <header class="sticky top-0 z-40 backdrop-blur-md bg-opacity-80 border-b border-subtle" style="background-color: color-mix(in srgb, var(--bg-primary) 85%, transparent);">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-3">
+      <!-- Brand Identity -->
+      <a href="#hero" class="flex items-center gap-3 group focus:outline-none">
+        <div class="w-9 h-9 rounded-lg btn-accent flex items-center justify-center font-mono font-bold text-sm tracking-tighter shadow-sm">
+          AS
+        </div>
+        <div>
+          <span id="navBrandName" class="font-bold tracking-tight text-sm sm:text-base block leading-none">ANMOL SONI</span>
+          <span class="font-mono text-[11px] text-muted block mt-0.5">CODE // DATA // VISUALS</span>
+        </div>
+      </a>
+
+      <!-- Desktop Nav Links -->
+      <nav class="hidden md:flex items-center gap-1 lg:gap-2 text-sm font-medium">
+        <a href="#about" class="px-3 py-1.5 rounded-lg hover:bg-zinc-800/40 transition">About</a>
+        <a href="#skills" class="px-3 py-1.5 rounded-lg hover:bg-zinc-800/40 transition">Skills &amp; Metrics</a>
+        <a href="#projects" class="px-3 py-1.5 rounded-lg hover:bg-zinc-800/40 transition">Projects</a>
+        <a href="#sandbox" class="px-3 py-1.5 rounded-lg hover:bg-zinc-800/40 transition">Live Sandbox</a>
+        <a href="#beyond" class="px-3 py-1.5 rounded-lg hover:bg-zinc-800/40 transition">Creative &amp; Life</a>
+        <a href="#contact" class="px-3 py-1.5 rounded-lg hover:bg-zinc-800/40 transition">Contact</a>
+      </nav>
+
+      <!-- Utility Controls: Theme Switcher & Source/Customizer -->
+      <div class="flex items-center gap-2">
+        <div class="hidden sm:flex items-center badge-surface rounded-lg p-0.5 text-xs font-mono">
+          <button type="button" id="themeBtnDark" onclick="setTheme('dark')" class="px-2.5 py-1 rounded-md transition font-medium btn-accent" title="Minimalist Monochrome Dark">Mono</button>
+          <button type="button" id="themeBtnLight" onclick="setTheme('light')" class="px-2.5 py-1 rounded-md transition text-muted hover:opacity-80" title="Minimalist Paper Light">Light</button>
+          <button type="button" id="themeBtnEmerald" onclick="setTheme('emerald')" class="px-2.5 py-1 rounded-md transition text-muted hover:opacity-80" title="Terminal Emerald">Term</button>
+        </div>
+
+        <button type="button" onclick="openCustomizerModal()" class="px-3 py-1.5 rounded-lg badge-surface text-xs font-mono font-medium hover:opacity-85 transition flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+          <span>Customize / Code</span>
+        </button>
+
+        <button type="button" id="mobileMenuBtn" onclick="toggleMobileMenu()" class="md:hidden p-2 rounded-lg badge-surface" aria-label="Toggle Menu">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Collapsible Navigation -->
+    <div id="mobileMenu" class="hidden md:hidden border-t border-subtle px-4 pt-3 pb-4 space-y-2 surface-secondary">
+      <div class="grid grid-cols-2 gap-2 text-sm">
+        <a href="#about" onclick="closeMobileMenu()" class="px-3 py-2 rounded-lg surface-card">About</a>
+        <a href="#skills" onclick="closeMobileMenu()" class="px-3 py-2 rounded-lg surface-card">Skills &amp; Metrics</a>
+        <a href="#projects" onclick="closeMobileMenu()" class="px-3 py-2 rounded-lg surface-card">Projects</a>
+        <a href="#sandbox" onclick="closeMobileMenu()" class="px-3 py-2 rounded-lg surface-card">Live Sandbox</a>
+        <a href="#beyond" onclick="closeMobileMenu()" class="px-3 py-2 rounded-lg surface-card">Creative &amp; Life</a>
+        <a href="#contact" onclick="closeMobileMenu()" class="px-3 py-2 rounded-lg surface-card">Contact</a>
+      </div>
+      <div class="pt-2 flex items-center justify-between border-t border-subtle">
+        <span class="text-xs font-mono text-muted">Theme Mode:</span>
+        <div class="flex gap-1 text-xs font-mono">
+          <button type="button" onclick="setTheme('dark')" class="px-2.5 py-1 rounded surface-card">Mono</button>
+          <button type="button" onclick="setTheme('light')" class="px-2.5 py-1 rounded surface-card">Light</button>
+          <button type="button" onclick="setTheme('emerald')" class="px-2.5 py-1 rounded surface-card">Term</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="grid-backdrop">
+
+    <!-- HERO SECTION -->
+    <section id="hero" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-16 lg:py-20">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+        <!-- Hero Left Column -->
+        <div class="lg:col-span-7 space-y-6">
+          <div class="inline-flex flex-wrap items-center gap-2 px-3 py-1.5 rounded-full badge-surface text-xs font-mono">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span>AVAILABLE FOR PYTHON &amp; DATA ANALYTICS INTERNSHIPS</span>
+            <span class="text-muted">| JAIPUR, IN</span>
+          </div>
+
+          <div class="space-y-3">
+            <p class="font-mono text-xs sm:text-sm uppercase tracking-widest text-muted">
+              HELLO, I'M <span id="heroNameInline" class="font-semibold">ANMOL SONI</span>
+            </p>
+            <h1 id="heroHeadline" class="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.1]">
+              Turning raw data, clean code &amp; visual craft into business impact.
+            </h1>
+          </div>
+
+          <p id="heroBio" class="text-base sm:text-lg text-muted max-w-2xl leading-relaxed">
+            Developer &amp; Data Analytics undergraduate pursuing <strong class="font-semibold" style="color: var(--text-primary);">BBA in Data Analytics &amp; Data Visualization (Samatrix Program)</strong> at <strong class="font-semibold" style="color: var(--text-primary);">Jaipur School of Business, JECRC University</strong>. Combining Python automation, Power BI &amp; Excel modeling, and high-contrast visual media production to modernize business workflows and scale family enterprise operations.
+          </p>
+
+          <!-- Key Quick Badges -->
+          <div class="flex flex-wrap gap-2 pt-1 font-mono text-xs">
+            <span class="px-3 py-1.5 rounded-lg surface-card">Python 3 &amp; Data Automation</span>
+            <span class="px-3 py-1.5 rounded-lg surface-card">Power BI &amp; Excel Modeling</span>
+            <span class="px-3 py-1.5 rounded-lg surface-card">Data Visualization (DADV)</span>
+            <span class="px-3 py-1.5 rounded-lg surface-card">JU Socials Media Team</span>
+          </div>
+
+          <!-- CTA Buttons -->
+          <div class="flex flex-wrap items-center gap-3 pt-2">
+            <a href="#projects" class="px-5 py-3 rounded-xl btn-accent font-semibold text-sm transition flex items-center gap-2 shadow-sm">
+              <span>Explore Projects</span>
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+            </a>
+            <a href="#contact" class="px-5 py-3 rounded-xl surface-card font-semibold text-sm hover:opacity-85 transition">
+              Get In Touch
+            </a>
+            <button type="button" onclick="downloadResumeSummary()" class="px-4 py-3 rounded-xl badge-surface font-mono text-xs hover:opacity-85 transition flex items-center gap-2">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+              <span>Export CV (.txt)</span>
+            </button>
+          </div>
+
+          <!-- Quick Metric Strip -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4">
+            <div class="surface-card rounded-xl p-3.5">
+              <div class="font-mono text-xl sm:text-2xl font-bold">86.7%</div>
+              <div class="text-xs text-muted mt-0.5">CBSE XII Commerce</div>
+            </div>
+            <div class="surface-card rounded-xl p-3.5">
+              <div class="font-mono text-xl sm:text-2xl font-bold">BBA DADV</div>
+              <div class="text-xs text-muted mt-0.5">JECRC Samatrix '26</div>
+            </div>
+            <div class="surface-card rounded-xl p-3.5">
+              <div class="font-mono text-xl sm:text-2xl font-bold" id="metricProjectCount">6</div>
+              <div class="text-xs text-muted mt-0.5">Featured Builds</div>
+            </div>
+            <div class="surface-card rounded-xl p-3.5">
+              <div class="font-mono text-xl sm:text-2xl font-bold">JU Socials</div>
+              <div class="text-xs text-muted mt-0.5">Visual &amp; Media Lead</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hero Right Column: Interactive Coder Terminal -->
+        <div class="lg:col-span-5">
+          <div class="surface-card rounded-2xl overflow-hidden shadow-2xl border border-subtle">
+            <!-- Terminal Header Bar -->
+            <div class="px-4 py-3 surface-secondary border-b border-subtle flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="w-3 h-3 rounded-full bg-rose-500/80"></span>
+                <span class="w-3 h-3 rounded-full bg-amber-500/80"></span>
+                <span class="w-3 h-3 rounded-full bg-emerald-500/80"></span>
+                <span class="ml-2 font-mono text-xs text-muted">anmol@jecrc-dadv: ~/portfolio</span>
+              </div>
+              <button type="button" onclick="runTerminalCommand('clear')" class="text-[11px] font-mono text-muted hover:underline">clear</button>
+            </div>
+
+            <!-- Quick Command Chips -->
+            <div class="px-4 py-2 surface-secondary border-b border-subtle flex flex-wrap items-center gap-1.5">
+              <span class="text-[11px] font-mono text-muted mr-1">Try:</span>
+              <button type="button" onclick="runTerminalCommand('whoami')" class="px-2 py-0.5 rounded badge-surface font-mono text-[11px] hover:opacity-80">whoami</button>
+              <button type="button" onclick="runTerminalCommand('skills')" class="px-2 py-0.5 rounded badge-surface font-mono text-[11px] hover:opacity-80">skills</button>
+              <button type="button" onclick="runTerminalCommand('education')" class="px-2 py-0.5 rounded badge-surface font-mono text-[11px] hover:opacity-80">education</button>
+              <button type="button" onclick="runTerminalCommand('projects')" class="px-2 py-0.5 rounded badge-surface font-mono text-[11px] hover:opacity-80">projects</button>
+              <button type="button" onclick="runTerminalCommand('hobbies')" class="px-2 py-0.5 rounded badge-surface font-mono text-[11px] hover:opacity-80">hobbies</button>
+              <button type="button" onclick="runTerminalCommand('contact')" class="px-2 py-0.5 rounded badge-surface font-mono text-[11px] hover:opacity-80">contact</button>
+            </div>
+
+            <!-- Terminal Output Log -->
+            <div id="terminalOutput" class="p-4 font-mono text-xs sm:text-sm h-72 overflow-y-auto space-y-2.5 leading-relaxed">
+              <div class="text-muted">// Interactive Portfolio Shell v2.6 (Type <span class="underline">help</span> or click a command above)</div>
+              <div>
+                <span class="text-emerald-400">anmol@portfolio:~$</span> <span>python3 profile.py --summary</span>
+              </div>
+              <div class="pl-3 border-l-2 border-subtle space-y-1 text-xs">
+                <div><span class="text-muted">Name:</span> Anmol Soni</div>
+                <div><span class="text-muted">Program:</span> BBA (Data Analytics &amp; Data Visualization) — Section D</div>
+                <div><span class="text-muted">University:</span> Jaipur School of Business, JECRC University (ID: 26bban0864)</div>
+                <div><span class="text-muted">Stack:</span> Python, Excel, Power BI, Data Storytelling, Visual Media</div>
+                <div><span class="text-muted">Mission:</span> Bridging business analytics &amp; creative media to scale family business &amp; modern brands.</div>
+              </div>
+            </div>
+
+            <!-- Terminal Input Row -->
+            <form id="terminalForm" onsubmit="handleTerminalSubmit(event)" class="px-4 py-2.5 surface-secondary border-t border-subtle flex items-center gap-2 font-mono text-xs sm:text-sm">
+              <span class="text-emerald-400 shrink-0">anmol@portfolio:~$</span>
+              <input id="terminalInput" type="text" placeholder="Type a command (help, skills, education, contact)..." autocomplete="off" class="w-full bg-transparent focus:outline-none text-xs sm:text-sm">
+              <button type="submit" class="px-2.5 py-1 rounded btn-accent text-xs font-semibold shrink-0">Run</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABOUT & EDUCATION TIMELINE SECTION -->
+    <section id="about" class="py-16 border-t border-subtle surface-secondary">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+          <div>
+            <p class="font-mono text-xs uppercase tracking-widest text-muted">01 // ARCHITECTURE OF ME</p>
+            <h2 class="text-2xl sm:text-4xl font-bold tracking-tight mt-1">Academic Foundation &amp; Vision</h2>
+          </div>
+          <p class="text-sm text-muted max-w-md font-mono">
+            Combining structured commerce fundamentals with modern Python analytics and visual storytelling.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          <!-- Left: Narrative & Pillars -->
+          <div class="lg:col-span-6 space-y-4">
+            <div class="surface-card rounded-2xl p-6 space-y-4">
+              <div class="flex items-center justify-between">
+                <span class="font-mono text-xs px-2.5 py-1 rounded badge-surface">CORE PHILOSOPHY</span>
+                <span class="font-mono text-xs text-muted">Jaipur, Rajasthan</span>
+              </div>
+              <h3 class="text-xl font-bold">Where Business Acumen Meets Code &amp; Camera</h3>
+              <p class="text-sm text-muted leading-relaxed">
+                As a first-year BBA student specializing in <strong style="color: var(--text-primary);">Data Analytics and Data Visualization (DADV)</strong> via the Samatrix program at JECRC University, I approach problems from two angles: rigorous quantitative analysis and compelling visual presentation.
+              </p>
+              <p class="text-sm text-muted leading-relaxed">
+                Whether writing Python scripts to automate attendance and retail margin calculations, designing interactive Power BI dashboards, or capturing high-contrast campus culture for <strong style="color: var(--text-primary);">JU Socials</strong>, my long-term goal is to apply data-driven management and digital branding to scale our <strong style="color: var(--text-primary);">family business</strong> and build impactful creative analytics solutions.
+              </p>
+
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+                <div class="p-3.5 rounded-xl surface-secondary border border-subtle">
+                  <div class="font-mono text-xs text-muted">PILLAR 01</div>
+                  <div class="font-semibold text-sm mt-1">Data Analytics</div>
+                  <div class="text-xs text-muted mt-1">Python, Excel formulas, Power BI KPI modeling &amp; insight extraction.</div>
+                </div>
+                <div class="p-3.5 rounded-xl surface-secondary border border-subtle">
+                  <div class="font-mono text-xs text-muted">PILLAR 02</div>
+                  <div class="font-semibold text-sm mt-1">Business Strategy</div>
+                  <div class="text-xs text-muted mt-1">Commerce foundations (86.7% CBSE XII) &amp; family enterprise growth.</div>
+                </div>
+                <div class="p-3.5 rounded-xl surface-secondary border border-subtle">
+                  <div class="font-mono text-xs text-muted">PILLAR 03</div>
+                  <div class="font-semibold text-sm mt-1">Visual Craft</div>
+                  <div class="text-xs text-muted mt-1">Minimalist monochrome design, photography &amp; video production.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Structured Education & Campus Roles Timeline -->
+          <div class="lg:col-span-6 space-y-4">
+            <div class="surface-card rounded-2xl p-6 space-y-6">
+              <div class="flex items-center justify-between">
+                <h3 class="text-lg font-bold">Education &amp; Campus Leadership</h3>
+                <span class="font-mono text-xs text-muted">2025 — 2026+</span>
+              </div>
+
+              <div class="space-y-5 relative before:absolute before:top-2 before:bottom-2 before:left-3 before:w-px before:bg-zinc-700/60">
+                <!-- Item 1 -->
+                <div class="relative pl-9">
+                  <span class="w-6 h-6 rounded-full btn-accent font-mono text-[10px] font-bold flex items-center justify-center absolute left-0 top-0.5">01</span>
+                  <div class="flex flex-wrap items-center justify-between gap-2">
+                    <h4 class="font-bold text-sm sm:text-base">BBA — Data Analytics &amp; Data Visualization (Samatrix)</h4>
+                    <span class="font-mono text-xs px-2 py-0.5 rounded badge-surface">Aug 2026 – Present</span>
+                  </div>
+                  <p class="text-xs font-mono text-muted mt-0.5">Jaipur School of Business, JECRC University · Section D (ID: 26bban0864)</p>
+                  <p class="text-xs text-muted mt-1.5 leading-relaxed">
+                    Coursework in Python programming, business statistics, spreadsheet modeling, data visualization, and business communication. Active participant in JECRC Student Council interviews and academic group initiatives.
+                  </p>
+                </div>
+
+                <!-- Item 2 -->
+                <div class="relative pl-9">
+                  <span class="w-6 h-6 rounded-full badge-surface font-mono text-[10px] font-bold flex items-center justify-center absolute left-0 top-0.5">02</span>
+                  <div class="flex flex-wrap items-center justify-between gap-2">
+                    <h4 class="font-bold text-sm sm:text-base">Media Team Contributor — JU Socials</h4>
+                    <span class="font-mono text-xs px-2 py-0.5 rounded badge-surface">Sep 2026 – Present</span>
+                  </div>
+                  <p class="text-xs font-mono text-muted mt-0.5">JECRC University Socials · Campus Media &amp; Visual Documentation</p>
+                  <p class="text-xs text-muted mt-1.5 leading-relaxed">
+                    Capturing candid visual stills, crowd energy, and short-form video reels documenting campus events and student culture.
+                  </p>
+                </div>
+
+                <!-- Item 3 -->
+                <div class="relative pl-9">
+                  <span class="w-6 h-6 rounded-full badge-surface font-mono text-[10px] font-bold flex items-center justify-center absolute left-0 top-0.5">03</span>
+                  <div class="flex flex-wrap items-center justify-between gap-2">
+                    <h4 class="font-bold text-sm sm:text-base">Senior Secondary (Class XII — CBSE Commerce Stream)</h4>
+                    <span class="font-mono text-xs px-2 py-0.5 rounded badge-surface">Score: 86.7%</span>
+                  </div>
+                  <p class="text-xs font-mono text-muted mt-0.5">Central Board of Secondary Education (CBSE)</p>
+                  <p class="text-xs text-muted mt-1.5 leading-relaxed">
+                    Built strong analytical foundations in Accountancy, Business Studies, and Economics alongside school-level leadership in event organization, photography, and video editing.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SKILLS & DATA VISUALIZATION SECTION -->
+    <section id="skills" class="py-16 border-t border-subtle">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+          <div>
+            <p class="font-mono text-xs uppercase tracking-widest text-muted">02 // TECHNICAL &amp; CREATIVE STACK</p>
+            <h2 class="text-2xl sm:text-4xl font-bold tracking-tight mt-1">Skills &amp; Live Competency Analytics</h2>
+          </div>
+
+          <!-- Skill Category Filter Tabs -->
+          <div class="flex flex-wrap gap-1.5 font-mono text-xs" id="skillCategoryTabs">
+            <button type="button" onclick="filterSkills('all')" data-skill-tab="all" class="px-3 py-1.5 rounded-lg btn-accent font-medium transition">All Domains</button>
+            <button type="button" onclick="filterSkills('code')" data-skill-tab="code" class="px-3 py-1.5 rounded-lg surface-card text-muted hover:opacity-85 transition">Python &amp; Code</button>
+            <button type="button" onclick="filterSkills('analytics')" data-skill-tab="analytics" class="px-3 py-1.5 rounded-lg surface-card text-muted hover:opacity-85 transition">Analytics &amp; BI</button>
+            <button type="button" onclick="filterSkills('media')" data-skill-tab="media" class="px-3 py-1.5 rounded-lg surface-card text-muted hover:opacity-85 transition">Media &amp; Branding</button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          <!-- Skill Bars Grid -->
+          <div id="skillsGrid" class="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="surface-card rounded-xl p-4 space-y-2.5">
+          <div class="flex items-center justify-between gap-2">
+            <span class="font-bold text-sm">Python 3 (Scripting &amp; Logic)</span>
+            <span class="font-mono text-xs px-2 py-0.5 rounded badge-surface">82%</span>
+          </div>
+          <p class="text-xs text-muted">Data automation, CLI tools, attendance &amp; margin calculators</p>
+          <div class="w-full h-1.5 rounded-full surface-secondary overflow-hidden">
+            <div class="h-full btn-accent rounded-full transition-all duration-500" style="width: 82%"></div>
+          </div>
+          <div class="flex items-center justify-between text-[11px] font-mono text-muted">
+            <span>Core Language</span>
+            <span>Verified Stack</span>
+          </div>
+        </div>
+      
+        <div class="surface-card rounded-xl p-4 space-y-2.5">
+          <div class="flex items-center justify-between gap-2">
+            <span class="font-bold text-sm">Microsoft Excel (Advanced Modeling)</span>
+            <span class="font-mono text-xs px-2 py-0.5 rounded badge-surface">90%</span>
+          </div>
+          <p class="text-xs text-muted">Pivot tables, dynamic formulas, financial &amp; nutrition tracking</p>
+          <div class="w-full h-1.5 rounded-full surface-secondary overflow-hidden">
+            <div class="h-full btn-accent rounded-full transition-all duration-500" style="width: 90%"></div>
+          </div>
+          <div class="flex items-center justify-between text-[11px] font-mono text-muted">
+            <span>Spreadsheet BI</span>
+            <span>Verified Stack</span>
+          </div>
+        </div>
+      
+        <div class="surface-card rounded-xl p-4 space-y-2.5">
+          <div class="flex items-center justify-between gap-2">
+            <span class="font-bold text-sm">Power BI &amp; Data Visualization</span>
+            <span class="font-mono text-xs px-2 py-0.5 rounded badge-surface">85%</span>
+          </div>
+          <p class="text-xs text-muted">Interactive KPI dashboards, DAX metrics, visual storytelling</p>
+          <div class="w-full h-1.5 rounded-full surface-secondary overflow-hidden">
+            <div class="h-full btn-accent rounded-full transition-all duration-500" style="width: 85%"></div>
+          </div>
+          <div class="flex items-center justify-between text-[11px] font-mono text-muted">
+            <span>DADV Specialization</span>
+            <span>Verified Stack</span>
+          </div>
+        </div>
+      
+        <div class="surface-card rounded-xl p-4 space-y-2.5">
+          <div class="flex items-center justify-between gap-2">
+            <span class="font-bold text-sm">Business &amp; Commerce Analytics</span>
+            <span class="font-mono text-xs px-2 py-0.5 rounded badge-surface">88%</span>
+          </div>
+          <p class="text-xs text-muted">Retail margin analysis, inventory turnover, consumer insights</p>
+          <div class="w-full h-1.5 rounded-full surface-secondary overflow-hidden">
+            <div class="h-full btn-accent rounded-full transition-all duration-500" style="width: 88%"></div>
+          </div>
+          <div class="flex items-center justify-between text-[11px] font-mono text-muted">
+            <span>86.7% CBSE XII</span>
+            <span>Verified Stack</span>
+          </div>
+        </div>
+      
+        <div class="surface-card rounded-xl p-4 space-y-2.5">
+          <div class="flex items-center justify-between gap-2">
+            <span class="font-bold text-sm">HTML5, Tailwind CSS &amp; Git/Vercel</span>
+            <span class="font-mono text-xs px-2 py-0.5 rounded badge-surface">78%</span>
+          </div>
+          <p class="text-xs text-muted">Responsive web interfaces, GitHub version control, Vercel &amp; GSC</p>
+          <div class="w-full h-1.5 rounded-full surface-secondary overflow-hidden">
+            <div class="h-full btn-accent rounded-full transition-all duration-500" style="width: 78%"></div>
+          </div>
+          <div class="flex items-center justify-between text-[11px] font-mono text-muted">
+            <span>Web Deployment</span>
+            <span>Verified Stack</span>
+          </div>
+        </div>
+      
+        <div class="surface-card rounded-xl p-4 space-y-2.5">
+          <div class="flex items-center justify-between gap-2">
+            <span class="font-bold text-sm">Photography &amp; Visual Framing</span>
+            <span class="font-mono text-xs px-2 py-0.5 rounded badge-surface">92%</span>
+          </div>
+          <p class="text-xs text-muted">Candid campus stills, automotive night shoots, monochrome grading</p>
+          <div class="w-full h-1.5 rounded-full surface-secondary overflow-hidden">
+            <div class="h-full btn-accent rounded-full transition-all duration-500" style="width: 92%"></div>
+          </div>
+          <div class="flex items-center justify-between text-[11px] font-mono text-muted">
+            <span>JU Socials</span>
+            <span>Verified Stack</span>
+          </div>
+        </div>
+      
+        <div class="surface-card rounded-xl p-4 space-y-2.5">
+          <div class="flex items-center justify-between gap-2">
+            <span class="font-bold text-sm">Video Editing &amp; Reels Production</span>
+            <span class="font-mono text-xs px-2 py-0.5 rounded badge-surface">89%</span>
+          </div>
+          <p class="text-xs text-muted">High-retention event recaps, beat-synced transitions, festival reels</p>
+          <div class="w-full h-1.5 rounded-full surface-secondary overflow-hidden">
+            <div class="h-full btn-accent rounded-full transition-all duration-500" style="width: 89%"></div>
+          </div>
+          <div class="flex items-center justify-between text-[11px] font-mono text-muted">
+            <span>Digital Media</span>
+            <span>Verified Stack</span>
+          </div>
+        </div>
+      
+        <div class="surface-card rounded-xl p-4 space-y-2.5">
+          <div class="flex items-center justify-between gap-2">
+            <span class="font-bold text-sm">Event Organization &amp; Team Ops</span>
+            <span class="font-mono text-xs px-2 py-0.5 rounded badge-surface">86%</span>
+          </div>
+          <p class="text-xs text-muted">Campus coordination, crowd coverage, stakeholder communication</p>
+          <div class="w-full h-1.5 rounded-full surface-secondary overflow-hidden">
+            <div class="h-full btn-accent rounded-full transition-all duration-500" style="width: 86%"></div>
+          </div>
+          <div class="flex items-center justify-between text-[11px] font-mono text-muted">
+            <span>Leadership</span>
+            <span>Verified Stack</span>
+          </div>
+        </div>
+      </div>
+
+          <!-- Interactive Chart Card -->
+          <div class="lg:col-span-5 surface-card rounded-2xl p-6 space-y-4">
+            <div class="flex items-center justify-between gap-2">
+              <div>
+                <h3 class="font-bold text-base">Competency Distribution</h3>
+                <p class="text-xs text-muted font-mono">Interactive Chart.js View</p>
+              </div>
+              <div class="flex gap-1 font-mono text-xs badge-surface p-0.5 rounded-lg">
+                <button type="button" id="chartTypeRadar" onclick="switchSkillChart('radar')" class="px-2.5 py-1 rounded btn-accent">Radar</button>
+                <button type="button" id="chartTypeBar" onclick="switchSkillChart('bar')" class="px-2.5 py-1 rounded text-muted">Bar</button>
+              </div>
+            </div>
+
+            <div class="relative h-72 w-full">
+              <canvas id="skillsChartCanvas" width="830" height="360" style="display: block; box-sizing: border-box; height: 288px; width: 664px;"></canvas>
+            </div>
+
+            <div class="pt-2 border-t border-subtle flex items-center justify-between text-xs font-mono text-muted">
+              <span>Workflow: GitHub + Vercel + GSC</span>
+              <span>Focus: Data-Driven Growth</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROJECTS & CASE STUDIES SECTION -->
+    <section id="projects" class="py-16 border-t border-subtle surface-secondary">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+        <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-4">
+          <div>
+            <p class="font-mono text-xs uppercase tracking-widest text-muted">03 // PROOF OF WORK</p>
+            <h2 class="text-2xl sm:text-4xl font-bold tracking-tight mt-1">Featured Projects &amp; Builds</h2>
+          </div>
+
+          <!-- Filter & Search Controls -->
+          <div class="flex flex-wrap items-center gap-2">
+            <div class="flex flex-wrap gap-1.5 font-mono text-xs" id="projectFilterTabs">
+              <button type="button" onclick="setProjectCategory('all')" data-proj-tab="all" class="px-3 py-1.5 rounded-lg btn-accent font-medium transition">All</button>
+              <button type="button" onclick="setProjectCategory('python')" data-proj-tab="python" class="px-3 py-1.5 rounded-lg surface-card text-muted hover:opacity-85 transition">Python &amp; Code</button>
+              <button type="button" onclick="setProjectCategory('bi')" data-proj-tab="bi" class="px-3 py-1.5 rounded-lg surface-card text-muted hover:opacity-85 transition">Power BI &amp; Excel</button>
+              <button type="button" onclick="setProjectCategory('creative')" data-proj-tab="creative" class="px-3 py-1.5 rounded-lg surface-card text-muted hover:opacity-85 transition">Visual &amp; Media</button>
+            </div>
+
+            <div class="relative">
+              <input id="projectSearchInput" type="text" oninput="renderProjects()" placeholder="Search projects or tags..." class="px-3 py-1.5 rounded-lg surface-card text-xs font-mono focus:outline-none w-48 sm:w-56">
+            </div>
+          </div>
+        </div>
+
+        <!-- Projects Cards Grid -->
+        <div id="projectsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <article class="surface-card rounded-2xl p-6 flex flex-col justify-between space-y-5 hover:border-zinc-500 transition">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between gap-2">
+              <span class="font-mono text-xs px-2.5 py-1 rounded badge-surface">Python &amp; Code</span>
+              <span class="font-mono text-[11px] text-muted">+18% Stock Visibility &amp; Margin Tracking</span>
+            </div>
+            <h3 class="text-lg font-bold leading-snug">Family Business Inventory &amp; Margin Analyzer</h3>
+            <p class="text-xs sm:text-sm text-muted leading-relaxed">Automated Python toolkit designed to modernize family business ledger entries, compute product-level gross margins, and flag slow-moving inventory.</p>
+          </div>
+
+          <div class="space-y-4 pt-2">
+            <div class="flex flex-wrap gap-1.5 font-mono text-[11px]">
+              <span class="px-2 py-0.5 rounded surface-secondary border border-subtle">Python 3</span><span class="px-2 py-0.5 rounded surface-secondary border border-subtle">CSV Automation</span><span class="px-2 py-0.5 rounded surface-secondary border border-subtle">Retail Analytics</span>
+            </div>
+
+            <button type="button" onclick="openProjectModal('p1')" class="w-full py-2.5 px-4 rounded-xl surface-secondary border border-subtle font-mono text-xs font-semibold hover:opacity-85 transition flex items-center justify-between">
+              <span>Inspect Code &amp; Case Study</span>
+              <span>→</span>
+            </button>
+          </div>
+        </article>
+      
+        <article class="surface-card rounded-2xl p-6 flex flex-col justify-between space-y-5 hover:border-zinc-500 transition">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between gap-2">
+              <span class="font-mono text-xs px-2.5 py-1 rounded badge-surface">Python &amp; Code</span>
+              <span class="font-mono text-[11px] text-muted">Zero-Penalty Leave Planning Across Courses</span>
+            </div>
+            <h3 class="text-lg font-bold leading-snug">JECRC 75% Attendance &amp; Leave Optimizer</h3>
+            <p class="text-xs sm:text-sm text-muted leading-relaxed">Interactive modeling utility built for JECRC University students to compute allowable absences and recovery streaks to stay above the mandatory 75% attendance cutoff.</p>
+          </div>
+
+          <div class="space-y-4 pt-2">
+            <div class="flex flex-wrap gap-1.5 font-mono text-[11px]">
+              <span class="px-2 py-0.5 rounded surface-secondary border border-subtle">Python</span><span class="px-2 py-0.5 rounded surface-secondary border border-subtle">JavaScript</span><span class="px-2 py-0.5 rounded surface-secondary border border-subtle">Student Utility</span>
+            </div>
+
+            <button type="button" onclick="openProjectModal('p2')" class="w-full py-2.5 px-4 rounded-xl surface-secondary border border-subtle font-mono text-xs font-semibold hover:opacity-85 transition flex items-center justify-between">
+              <span>Inspect Code &amp; Case Study</span>
+              <span>→</span>
+            </button>
+          </div>
+        </article>
+      
+        <article class="surface-card rounded-2xl p-6 flex flex-col justify-between space-y-5 hover:border-zinc-500 transition">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between gap-2">
+              <span class="font-mono text-xs px-2.5 py-1 rounded badge-surface">Power BI &amp; Excel</span>
+              <span class="font-mono text-[11px] text-muted">Data-Backed Visual Positioning Framework</span>
+            </div>
+            <h3 class="text-lg font-bold leading-snug">Heritage Retail &amp; Campus Brand Visual Marketing Study</h3>
+            <p class="text-xs sm:text-sm text-muted leading-relaxed">Analytical study evaluating how data-driven visual content and minimalist branding improve social engagement for Jaipur heritage retail and campus beverage brands.</p>
+          </div>
+
+          <div class="space-y-4 pt-2">
+            <div class="flex flex-wrap gap-1.5 font-mono text-[11px]">
+              <span class="px-2 py-0.5 rounded surface-secondary border border-subtle">Power BI</span><span class="px-2 py-0.5 rounded surface-secondary border border-subtle">Market Research</span><span class="px-2 py-0.5 rounded surface-secondary border border-subtle">Jaipur Retail</span>
+            </div>
+
+            <button type="button" onclick="openProjectModal('p3')" class="w-full py-2.5 px-4 rounded-xl surface-secondary border border-subtle font-mono text-xs font-semibold hover:opacity-85 transition flex items-center justify-between">
+              <span>Inspect Code &amp; Case Study</span>
+              <span>→</span>
+            </button>
+          </div>
+        </article>
+      
+        <article class="surface-card rounded-2xl p-6 flex flex-col justify-between space-y-5 hover:border-zinc-500 transition">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between gap-2">
+              <span class="font-mono text-xs px-2.5 py-1 rounded badge-surface">Power BI &amp; Excel</span>
+              <span class="font-mono text-[11px] text-muted">Daily Macro &amp; Cost-Per-Gram Optimization</span>
+            </div>
+            <h3 class="text-lg font-bold leading-snug">High-Protein Vegetarian Nutrition &amp; Macro Tracker</h3>
+            <p class="text-xs sm:text-sm text-muted leading-relaxed">Dynamic spreadsheet and dashboard tracking daily calorie and protein targets across vegetarian whole-food sources (soya chunks, paneer, sattu, legumes, dairy) without whey.</p>
+          </div>
+
+          <div class="space-y-4 pt-2">
+            <div class="flex flex-wrap gap-1.5 font-mono text-[11px]">
+              <span class="px-2 py-0.5 rounded surface-secondary border border-subtle">Excel Modeling</span><span class="px-2 py-0.5 rounded surface-secondary border border-subtle">Data Viz</span><span class="px-2 py-0.5 rounded surface-secondary border border-subtle">Personal Analytics</span>
+            </div>
+
+            <button type="button" onclick="openProjectModal('p4')" class="w-full py-2.5 px-4 rounded-xl surface-secondary border border-subtle font-mono text-xs font-semibold hover:opacity-85 transition flex items-center justify-between">
+              <span>Inspect Code &amp; Case Study</span>
+              <span>→</span>
+            </button>
+          </div>
+        </article>
+      
+        <article class="surface-card rounded-2xl p-6 flex flex-col justify-between space-y-5 hover:border-zinc-500 transition">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between gap-2">
+              <span class="font-mono text-xs px-2.5 py-1 rounded badge-surface">Visual &amp; Media</span>
+              <span class="font-mono text-[11px] text-muted">High-Reach Campus Event Documentation</span>
+            </div>
+            <h3 class="text-lg font-bold leading-snug">JU Socials — Campus Culture &amp; Crowd Visual Archive</h3>
+            <p class="text-xs sm:text-sm text-muted leading-relaxed">Curated series of candid student stills, orientation highlights, and crowd energy coverage produced as a Media Team Contributor for JECRC University Socials.</p>
+          </div>
+
+          <div class="space-y-4 pt-2">
+            <div class="flex flex-wrap gap-1.5 font-mono text-[11px]">
+              <span class="px-2 py-0.5 rounded surface-secondary border border-subtle">Photography</span><span class="px-2 py-0.5 rounded surface-secondary border border-subtle">JU Socials</span><span class="px-2 py-0.5 rounded surface-secondary border border-subtle">Visual Storytelling</span>
+            </div>
+
+            <button type="button" onclick="openProjectModal('p5')" class="w-full py-2.5 px-4 rounded-xl surface-secondary border border-subtle font-mono text-xs font-semibold hover:opacity-85 transition flex items-center justify-between">
+              <span>Inspect Code &amp; Case Study</span>
+              <span>→</span>
+            </button>
+          </div>
+        </article>
+      
+        <article class="surface-card rounded-2xl p-6 flex flex-col justify-between space-y-5 hover:border-zinc-500 transition">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between gap-2">
+              <span class="font-mono text-xs px-2.5 py-1 rounded badge-surface">Visual &amp; Media</span>
+              <span class="font-mono text-[11px] text-muted">Cinematic Reels &amp; Low-Light Stills</span>
+            </div>
+            <h3 class="text-lg font-bold leading-snug">Jaipur Night Rides &amp; Automotive Motion Series</h3>
+            <p class="text-xs sm:text-sm text-muted leading-relaxed">Low-light photography and beat-synced reel edits featuring the black Jawa 42 Bobber and late-night architectural backdrops around Jal Mahal and Man Sagar Lake.</p>
+          </div>
+
+          <div class="space-y-4 pt-2">
+            <div class="flex flex-wrap gap-1.5 font-mono text-[11px]">
+              <span class="px-2 py-0.5 rounded surface-secondary border border-subtle">Video Editing</span><span class="px-2 py-0.5 rounded surface-secondary border border-subtle">Automotive</span><span class="px-2 py-0.5 rounded surface-secondary border border-subtle">Jaipur</span>
+            </div>
+
+            <button type="button" onclick="openProjectModal('p6')" class="w-full py-2.5 px-4 rounded-xl surface-secondary border border-subtle font-mono text-xs font-semibold hover:opacity-85 transition flex items-center justify-between">
+              <span>Inspect Code &amp; Case Study</span>
+              <span>→</span>
+            </button>
+          </div>
+        </article>
+      </div>
+      </div>
+    </section>
+
+    <!-- INTERACTIVE SANDBOX: LIVE ATTENDANCE & ANALYTICS ENGINE -->
+    <section id="sandbox" class="py-16 border-t border-subtle">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+          <div>
+            <p class="font-mono text-xs uppercase tracking-widest text-muted">04 // INTERACTIVE PYTHON-TO-JS SANDBOX</p>
+            <h2 class="text-2xl sm:text-4xl font-bold tracking-tight mt-1">Live 75% University Attendance &amp; Leave Optimizer</h2>
+            <p class="text-sm text-muted mt-1 max-w-2xl">
+              Built to solve a real campus problem at JECRC University: calculate exact attendance percentages, allowable leaves across upcoming sessions, and required consecutive classes to stay above the mandatory 75% threshold.
+            </p>
+          </div>
+          <div class="flex gap-2 font-mono text-xs">
+            <button type="button" onclick="loadAttendancePreset(10, 9, 3)" class="px-3 py-1.5 rounded-lg badge-surface hover:opacity-85">Preset: Comm Skills (9/10)</button>
+            <button type="button" onclick="loadAttendancePreset(16, 14, 4)" class="px-3 py-1.5 rounded-lg badge-surface hover:opacity-85">Preset: 14/16 Classes</button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+          <!-- Left: Interactive Controls & Output -->
+          <div class="lg:col-span-7 surface-card rounded-2xl p-6 space-y-6">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div class="p-4 rounded-xl surface-secondary border border-subtle space-y-2">
+                <label for="attTotalInput" class="block font-mono text-xs text-muted">TOTAL CLASSES HELD</label>
+                <input id="attTotalInput" type="number" min="1" max="200" value="10" oninput="updateAttendanceSandbox()" class="w-full bg-transparent font-mono text-2xl font-bold focus:outline-none border-b border-subtle pb-1">
+                <span class="text-[11px] text-muted block">Conducted so far</span>
+              </div>
+
+              <div class="p-4 rounded-xl surface-secondary border border-subtle space-y-2">
+                <label for="attPresentInput" class="block font-mono text-xs text-muted">CLASSES ATTENDED</label>
+                <input id="attPresentInput" type="number" min="0" max="200" value="9" oninput="updateAttendanceSandbox()" class="w-full bg-transparent font-mono text-2xl font-bold focus:outline-none border-b border-subtle pb-1">
+                <span class="text-[11px] text-muted block">Marked Present</span>
+              </div>
+
+              <div class="p-4 rounded-xl surface-secondary border border-subtle space-y-2">
+                <label for="attUpcomingInput" class="block font-mono text-xs text-muted">UPCOMING CLASSES</label>
+                <input id="attUpcomingInput" type="number" min="0" max="60" value="3" oninput="updateAttendanceSandbox()" class="w-full bg-transparent font-mono text-2xl font-bold focus:outline-none border-b border-subtle pb-1">
+                <span class="text-[11px] text-muted block">Planned window</span>
+              </div>
+            </div>
+
+            <!-- Live Computed Metrics -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div class="p-4 rounded-xl badge-surface">
+                <div class="font-mono text-xs text-muted">CURRENT ATTENDANCE</div>
+                <div id="attCurrentPct" class="font-mono text-2xl font-extrabold mt-1">90.00%</div>
+                <div id="attStatusBadge" class="text-xs font-mono text-emerald-400 mt-1">SAFE (≥ 75% Threshold)</div>
+              </div>
+
+              <div class="p-4 rounded-xl badge-surface">
+                <div class="font-mono text-xs text-muted">ALLOWED LEAVES IN WINDOW</div>
+                <div id="attAllowedLeaves" class="font-mono text-2xl font-extrabold mt-1">2 of 3</div>
+                <div id="attLeaveNote" class="text-xs text-muted mt-1">Attend at least 1 of next 3</div>
+              </div>
+
+              <div class="p-4 rounded-xl badge-surface">
+                <div class="font-mono text-xs text-muted">IF 1 LEAVE TAKEN NEXT</div>
+                <div id="attAfterOneLeave" class="font-mono text-2xl font-extrabold mt-1">81.82%</div>
+                <div class="text-xs text-muted mt-1">Projected next class</div>
+              </div>
+            </div>
+
+            <!-- Scenario Table -->
+            <div class="overflow-x-auto">
+              <table class="w-full text-left border-collapse font-mono text-xs">
+                <thead>
+                  <tr class="border-b border-subtle text-muted">
+                    <th class="py-2 pr-3">Leaves Taken (Upcoming)</th>
+                    <th class="py-2 px-3">Classes Attended</th>
+                    <th class="py-2 px-3">Final Ratio</th>
+                    <th class="py-2 px-3">Projected %</th>
+                    <th class="py-2 pl-3">75% Policy Status</th>
+                  </tr>
+                </thead>
+                <tbody id="attScenarioTableBody" class="divide-y divide-zinc-800/50">
+            <tr>
+              <td class="py-2 pr-3 font-semibold">0 leaves</td>
+              <td class="py-2 px-3">+3 attended</td>
+              <td class="py-2 px-3">12/13</td>
+              <td class="py-2 px-3 font-bold">92.31%</td>
+              <td class="py-2 pl-3 text-emerald-400">ELIGIBLE (≥75%)</td>
+            </tr>
+          
+            <tr>
+              <td class="py-2 pr-3 font-semibold">1 leave</td>
+              <td class="py-2 px-3">+2 attended</td>
+              <td class="py-2 px-3">11/13</td>
+              <td class="py-2 px-3 font-bold">84.62%</td>
+              <td class="py-2 pl-3 text-emerald-400">ELIGIBLE (≥75%)</td>
+            </tr>
+          
+            <tr>
+              <td class="py-2 pr-3 font-semibold">2 leaves</td>
+              <td class="py-2 px-3">+1 attended</td>
+              <td class="py-2 px-3">10/13</td>
+              <td class="py-2 px-3 font-bold">76.92%</td>
+              <td class="py-2 pl-3 text-emerald-400">ELIGIBLE (≥75%)</td>
+            </tr>
+          
+            <tr>
+              <td class="py-2 pr-3 font-semibold">3 leaves</td>
+              <td class="py-2 px-3">+0 attended</td>
+              <td class="py-2 px-3">9/13</td>
+              <td class="py-2 px-3 font-bold">69.23%</td>
+              <td class="py-2 pl-3 text-rose-400">SHORTFALL (&lt;75%)</td>
+            </tr>
+          </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Right: Python Reference Implementation -->
+          <div class="lg:col-span-5 surface-card rounded-2xl p-6 flex flex-col justify-between space-y-4">
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="font-mono text-xs px-2.5 py-1 rounded badge-surface">attendance_engine.py</span>
+                <button type="button" onclick="copyPythonSnippet()" class="text-xs font-mono px-2.5 py-1 rounded surface-secondary border border-subtle hover:opacity-80">Copy Python</button>
+              </div>
+              <pre id="pythonCodeBlock" class="p-4 rounded-xl surface-secondary border border-subtle font-mono text-xs overflow-x-auto leading-relaxed"><code>def evaluate_attendance(total: int, present: int, upcoming: int, target: float = 0.75):
+    """
+    JECRC DADV Attendance Threshold &amp; Leave Optimizer
+    Author: Anmol Soni (26bban0864)
+    """
+    current_pct = (present / total) * 100 if total &gt; 0 else 0.0
+    final_total = total + upcoming
+
+    # Max leaves allowed while keeping final_present / final_total &gt;= 0.75
+    min_total_present = -(-int(final_total * target * 100) // 100)
+    import math
+    req_present = math.ceil(final_total * target)
+    needed_in_window = max(0, req_present - present)
+    allowed_leaves = max(0, upcoming - needed_in_window)
+
+    return {
+        "current_pct": round(current_pct, 2),
+        "final_total": final_total,
+        "needed_in_window": needed_in_window,
+        "allowed_leaves": allowed_leaves
+    }</code></pre>
+            </div>
+
+            <div class="p-4 rounded-xl surface-secondary border border-subtle text-xs space-y-1">
+              <div class="font-mono font-semibold">Live Execution Trace:</div>
+              <div id="pythonTraceOutput" class="font-mono text-muted">&gt;&gt;&gt; evaluate_attendance(total=10, present=9, upcoming=3)<br>{'current_pct': 90.00, 'final_total': 13, 'needed_in_window': 1, 'allowed_leaves': 2}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CREATIVE MEDIA & BEYOND THE CODE SECTION -->
+    <section id="beyond" class="py-16 border-t border-subtle surface-secondary">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+        <div>
+          <p class="font-mono text-xs uppercase tracking-widest text-muted">05 // VISUAL LENS &amp; OFF-SCREEN</p>
+          <h2 class="text-2xl sm:text-4xl font-bold tracking-tight mt-1">Creative Media, Night Rides &amp; Interests</h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+          <!-- Card 1 -->
+          <div class="surface-card rounded-2xl p-5 space-y-3">
+            <div class="flex items-center justify-between font-mono text-xs text-muted">
+              <span>01 // VISUAL MEDIA</span>
+              <span>JU SOCIALS</span>
+            </div>
+            <h3 class="font-bold text-base">Photography &amp; Reels</h3>
+            <p class="text-xs text-muted leading-relaxed">
+              Shooting candid campus stills, festival reels, and high-contrast vehicle photography (including night shoots featuring the black Jawa 42 Bobber around Jaipur).
+            </p>
+            <div class="pt-1 flex flex-wrap gap-1.5 font-mono text-[11px]">
+              <span class="px-2 py-0.5 rounded badge-surface">Candid Stills</span>
+              <span class="px-2 py-0.5 rounded badge-surface">Color Grading</span>
+              <span class="px-2 py-0.5 rounded badge-surface">Reels Editing</span>
+            </div>
+          </div>
+
+          <!-- Card 2 -->
+          <div class="surface-card rounded-2xl p-5 space-y-3">
+            <div class="flex items-center justify-between font-mono text-xs text-muted">
+              <span>02 // JAIPUR ROUTES</span>
+              <span>WHEELS</span>
+            </div>
+            <h3 class="font-bold text-base">Motorcycling &amp; Cycling</h3>
+            <p class="text-xs text-muted leading-relaxed">
+              Late-night rides around Jal Mahal and Man Sagar Lake, exploring Jaipur's city cycling culture, and documenting two-wheel machines in motion.
+            </p>
+            <div class="pt-1 flex flex-wrap gap-1.5 font-mono text-[11px]">
+              <span class="px-2 py-0.5 rounded badge-surface">Jal Mahal Nights</span>
+              <span class="px-2 py-0.5 rounded badge-surface">City Cycling</span>
+            </div>
+          </div>
+
+          <!-- Card 3 -->
+          <div class="surface-card rounded-2xl p-5 space-y-3">
+            <div class="flex items-center justify-between font-mono text-xs text-muted">
+              <span>03 // MOTORSPORT &amp; SPORT</span>
+              <span>TELEMETRY</span>
+            </div>
+            <h3 class="font-bold text-base">Formula 1 &amp; T20 Cricket</h3>
+            <p class="text-xs text-muted leading-relaxed">
+              Following Formula 1 race strategy and telemetry (backing Charles Leclerc &amp; Lewis Hamilton) alongside international T20 cricket analytics.
+            </p>
+            <div class="pt-1 flex flex-wrap gap-1.5 font-mono text-[11px]">
+              <span class="px-2 py-0.5 rounded badge-surface">F1 Strategy</span>
+              <span class="px-2 py-0.5 rounded badge-surface">Leclerc #16</span>
+              <span class="px-2 py-0.5 rounded badge-surface">Hamilton #44</span>
+            </div>
+          </div>
+
+          <!-- Card 4 -->
+          <div class="surface-card rounded-2xl p-5 space-y-3">
+            <div class="flex items-center justify-between font-mono text-xs text-muted">
+              <span>04 // CULTURE &amp; GAMING</span>
+              <span>COMPETITIVE</span>
+            </div>
+            <h3 class="font-bold text-base">Valorant, Cinema &amp; Music</h3>
+            <p class="text-xs text-muted leading-relaxed">
+              Tactical team coordination in Valorant, cinema appreciation, and curating desi hip-hop &amp; Punjabi tracks (Karan Aujla, AP Dhillon, Yo Yo Honey Singh) for visual edits.
+            </p>
+            <div class="pt-1 flex flex-wrap gap-1.5 font-mono text-[11px]">
+              <span class="px-2 py-0.5 rounded badge-surface">Valorant</span>
+              <span class="px-2 py-0.5 rounded badge-surface">Cinema</span>
+              <span class="px-2 py-0.5 rounded badge-surface">Desi Hip-Hop</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT & COLLABORATION SECTION -->
+    <section id="contact" class="py-16 border-t border-subtle">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
+          <!-- Left Column: Direct Contact Cards -->
+          <div class="lg:col-span-6 space-y-6">
+            <div>
+              <p class="font-mono text-xs uppercase tracking-widest text-muted">06 // INITIALIZE CONNECTION</p>
+              <h2 class="text-2xl sm:text-4xl font-bold tracking-tight mt-1">Let's Build or Collaborate</h2>
+              <p class="text-sm text-muted mt-2 leading-relaxed">
+                Open to Python development internships, business analytics &amp; Power BI projects, campus media collaborations, and retail analytics consulting in Jaipur or remote.
+              </p>
+            </div>
+
+            <div class="space-y-3">
+              <!-- Email Card -->
+              <div class="surface-card rounded-xl p-4 flex items-center justify-between gap-3">
+                <div>
+                  <div class="font-mono text-xs text-muted">EMAIL ADDRESS</div>
+                  <a id="contactEmailLink" href="mailto:anmolsoni8875@gmail.com" class="font-mono text-sm sm:text-base font-semibold hover:underline break-all" target="_blank" rel="noopener noreferrer">anmolsoni8875@gmail.com</a>
+                </div>
+                <button type="button" onclick="copyText('anmolsoni8875@gmail.com', 'Email address copied!')" class="px-3 py-1.5 rounded-lg badge-surface font-mono text-xs hover:opacity-85 shrink-0">
+                  Copy Email
+                </button>
+              </div>
+
+              <!-- Phone Card -->
+              <div class="surface-card rounded-xl p-4 flex items-center justify-between gap-3">
+                <div>
+                  <div class="font-mono text-xs text-muted">DIRECT PHONE / WHATSAPP</div>
+                  <a href="tel:+919588959037" class="font-mono text-sm sm:text-base font-semibold hover:underline" target="_blank" rel="noopener noreferrer">+91 9588959037</a>
+                </div>
+                <button type="button" onclick="copyText('+919588959037', 'Phone number copied!')" class="px-3 py-1.5 rounded-lg badge-surface font-mono text-xs hover:opacity-85 shrink-0">
+                  Copy Phone
+                </button>
+              </div>
+
+              <!-- Location & University Card -->
+              <div class="surface-card rounded-xl p-4 flex items-center justify-between gap-3">
+                <div>
+                  <div class="font-mono text-xs text-muted">BASE &amp; UNIVERSITY</div>
+                  <div class="font-mono text-sm font-semibold">JECRC University · Jaipur, Rajasthan</div>
+                </div>
+                <span class="px-2.5 py-1 rounded badge-surface font-mono text-xs">IST (UTC+5:30)</span>
+              </div>
+            </div>
+
+            <!-- Social Profiles Row -->
+            <div class="flex flex-wrap gap-3 pt-1 font-mono text-xs">
+              <a id="socialGithubLink" href="https://github.com" target="_blank" rel="noopener noreferrer" class="px-4 py-2.5 rounded-xl surface-card hover:opacity-85 transition flex items-center gap-2">
+                <span>GitHub Profile</span>
+                <span>↗</span>
+              </a>
+              <a id="socialLinkedinLink" href="https://www.linkedin.com" target="_blank" rel="noopener noreferrer" class="px-4 py-2.5 rounded-xl surface-card hover:opacity-85 transition flex items-center gap-2">
+                <span>LinkedIn</span>
+                <span>↗</span>
+              </a>
+              <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer" class="px-4 py-2.5 rounded-xl surface-card hover:opacity-85 transition flex items-center gap-2">
+                <span>Instagram / Visuals</span>
+                <span>↗</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- Right Column: Interactive Message Dispatcher -->
+          <div class="lg:col-span-6">
+            <form id="contactForm" onsubmit="handleContactSubmit(event)" class="surface-card rounded-2xl p-6 space-y-4">
+              <div class="flex items-center justify-between">
+                <h3 class="font-bold text-lg">Send a Direct Inquiry</h3>
+                <span class="font-mono text-xs text-muted">Instant Draft + Log</span>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label for="senderName" class="block font-mono text-xs text-muted mb-1">YOUR NAME *</label>
+                  <input id="senderName" type="text" required="" placeholder="e.g. Rohan Sharma" class="w-full px-3.5 py-2.5 rounded-xl surface-secondary border border-subtle text-sm focus:outline-none">
+                </div>
+                <div>
+                  <label for="senderEmail" class="block font-mono text-xs text-muted mb-1">YOUR EMAIL *</label>
+                  <input id="senderEmail" type="email" required="" placeholder="rohan@company.com" class="w-full px-3.5 py-2.5 rounded-xl surface-secondary border border-subtle text-sm focus:outline-none">
+                </div>
+              </div>
+
+              <div>
+                <label for="inquiryTopic" class="block font-mono text-xs text-muted mb-1">OPPORTUNITY TYPE</label>
+                <select id="inquiryTopic" class="w-full px-3.5 py-2.5 rounded-xl surface-secondary border border-subtle text-sm focus:outline-none">
+                  <option value="Python / Data Analytics Internship">Python / Data Analytics Internship</option>
+                  <option value="Power BI &amp; Excel Dashboard Project">Power BI &amp; Excel Dashboard Project</option>
+                  <option value="Photography &amp; Visual Media Collaboration">Photography &amp; Visual Media Collaboration</option>
+                  <option value="Business &amp; Startup Analytics">Business &amp; Startup Analytics</option>
+                </select>
+              </div>
+
+              <div>
+                <label for="senderMessage" class="block font-mono text-xs text-muted mb-1">MESSAGE *</label>
+                <textarea id="senderMessage" rows="4" required="" placeholder="Hi Anmol, we'd love to discuss a Data Analytics role or project..." class="w-full px-3.5 py-2.5 rounded-xl surface-secondary border border-subtle text-sm focus:outline-none"></textarea>
+              </div>
+
+              <div class="flex flex-wrap items-center justify-between gap-3 pt-1">
+                <button type="submit" class="px-5 py-2.5 rounded-xl btn-accent font-semibold text-sm transition">
+                  Prepare &amp; Log Message
+                </button>
+                <span class="font-mono text-xs text-muted">Routes to anmolsoni8875@gmail.com</span>
+              </div>
+
+              <!-- Logged Inquiries Preview -->
+              <div id="loggedMessagesBox" class="hidden pt-4 border-t border-subtle space-y-2">
+                <div class="font-mono text-xs text-muted">RECENT DISPATCH LOG (SESSION):</div>
+                <div id="loggedMessagesList" class="space-y-2 text-xs font-mono"></div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-subtle py-8 surface-secondary">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-muted">
+      <div>
+        © 2026 ANMOL SONI · BBA (DADV) JECRC UNIVERSITY, JAIPUR
+      </div>
+      <div class="flex items-center gap-4">
+        <a href="#hero" class="hover:underline">Back to Top ↑</a>
+        <button type="button" onclick="openCustomizerModal()" class="hover:underline">View / Export Source Code</button>
+      </div>
+    </div>
+  </footer>
+
+  <!-- PROJECT CASE STUDY MODAL -->
+  <div id="projectModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/75 backdrop-blur-sm">
+    <div class="surface-card rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 space-y-5 shadow-2xl">
+      <div class="flex items-start justify-between gap-4 border-b border-subtle pb-4">
+        <div>
+          <span id="modalProjCategory" class="font-mono text-xs px-2.5 py-0.5 rounded badge-surface">CATEGORY</span>
+          <h3 id="modalProjTitle" class="text-xl sm:text-2xl font-bold mt-2">Project Title</h3>
+        </div>
+        <button type="button" onclick="closeProjectModal()" class="p-2 rounded-lg badge-surface text-xs font-mono">ESC / Close</button>
+      </div>
+
+      <p id="modalProjDesc" class="text-sm text-muted leading-relaxed"></p>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div class="p-3.5 rounded-xl surface-secondary border border-subtle">
+          <div class="font-mono text-xs text-muted">KEY IMPACT / METRIC</div>
+          <div id="modalProjImpact" class="font-mono text-sm font-bold mt-1"></div>
+        </div>
+        <div class="p-3.5 rounded-xl surface-secondary border border-subtle">
+          <div class="font-mono text-xs text-muted">TECH STACK</div>
+          <div id="modalProjStack" class="font-mono text-xs mt-1"></div>
+        </div>
+      </div>
+
+      <div class="space-y-2">
+        <div class="flex items-center justify-between">
+          <span class="font-mono text-xs text-muted">IMPLEMENTATION SNIPPET / WORKFLOW</span>
+          <button type="button" onclick="copyModalSnippet()" class="font-mono text-xs px-2.5 py-1 rounded badge-surface hover:opacity-80">Copy Code</button>
+        </div>
+        <pre id="modalProjCode" class="p-4 rounded-xl surface-secondary border border-subtle font-mono text-xs overflow-x-auto leading-relaxed"></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- LIVE CUSTOMIZER & SOURCE CODE EXPORT MODAL -->
+  <div id="customizerModal" class="fixed inset-0 z-50 items-center justify-center p-4 bg-black/75 backdrop-blur-sm flex">
+    <div class="surface-card rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto p-6 space-y-6 shadow-2xl">
+      <div class="flex items-center justify-between border-b border-subtle pb-4">
+        <div>
+          <h3 class="text-xl font-bold">Portfolio Studio — Customize &amp; Export Code</h3>
+          <p class="text-xs font-mono text-muted mt-0.5">Edit your live portfolio details, add a new project, or copy the standalone HTML code for GitHub &amp; Vercel deployment.</p>
+        </div>
+        <button type="button" onclick="closeCustomizerModal()" class="px-3 py-1.5 rounded-lg badge-surface text-xs font-mono">Close</button>
+      </div>
+
+      <!-- Profile Quick Editor -->
+      <div class="space-y-4">
+        <h4 class="font-mono text-xs uppercase tracking-wider text-muted">1. Live Profile Details</h4>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label for="editNameInput" class="block font-mono text-xs text-muted mb-1">DISPLAY NAME</label>
+            <input id="editNameInput" type="text" value="Anmol Soni" class="w-full px-3 py-2 rounded-lg surface-secondary border border-subtle text-sm">
+          </div>
+          <div>
+            <label for="editGithubInput" class="block font-mono text-xs text-muted mb-1">GITHUB URL</label>
+            <input id="editGithubInput" type="url" value="https://github.com/anmolsoni" class="w-full px-3 py-2 rounded-lg surface-secondary border border-subtle text-sm font-mono">
+          </div>
+        </div>
+        <div>
+          <label for="editHeadlineInput" class="block font-mono text-xs text-muted mb-1">HERO HEADLINE</label>
+          <input id="editHeadlineInput" type="text" value="Turning raw data, clean code &amp; visual craft into business impact." class="w-full px-3 py-2 rounded-lg surface-secondary border border-subtle text-sm">
+        </div>
+        <div class="flex gap-2">
+          <button type="button" onclick="saveProfileEdits()" class="px-4 py-2 rounded-lg btn-accent text-xs font-semibold">Apply Live Changes</button>
+          <button type="button" onclick="resetProfileEdits()" class="px-4 py-2 rounded-lg badge-surface text-xs font-mono">Reset Defaults</button>
+        </div>
+      </div>
+
+      <!-- Add Custom Project -->
+      <div class="space-y-4 pt-4 border-t border-subtle">
+        <h4 class="font-mono text-xs uppercase tracking-wider text-muted">2. Add a New Project Card</h4>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <input id="newProjTitle" type="text" placeholder="Project Title" class="px-3 py-2 rounded-lg surface-secondary border border-subtle text-sm">
+          <select id="newProjCat" class="px-3 py-2 rounded-lg surface-secondary border border-subtle text-sm">
+            <option value="python">Python &amp; Code</option>
+            <option value="bi">Power BI &amp; Excel</option>
+            <option value="creative">Visual &amp; Media</option>
+          </select>
+          <input id="newProjTags" type="text" placeholder="Tags (e.g. Python, SQL)" class="px-3 py-2 rounded-lg surface-secondary border border-subtle text-sm">
+        </div>
+        <input id="newProjSummary" type="text" placeholder="Short impact summary..." class="w-full px-3 py-2 rounded-lg surface-secondary border border-subtle text-sm">
+        <button type="button" onclick="addCustomProject()" class="px-4 py-2 rounded-lg badge-surface text-xs font-mono hover:opacity-85">+ Add Project to Grid</button>
+      </div>
+
+      <!-- Export Ready-to-Deploy Code -->
+      <div class="space-y-3 pt-4 border-t border-subtle">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <h4 class="font-mono text-xs uppercase tracking-wider text-muted">3. Deploy to GitHub + Vercel</h4>
+            <p class="text-xs text-muted">Copy or download this complete single-file HTML portfolio to push to your GitHub repository and connect to Vercel.</p>
+          </div>
+          <div class="flex gap-2">
+            <button type="button" onclick="copyFullHtmlSource()" class="px-4 py-2 rounded-lg btn-accent text-xs font-semibold">Copy Full HTML Code</button>
+            <button type="button" onclick="downloadFullHtmlSource()" class="px-4 py-2 rounded-lg badge-surface text-xs font-mono">Download index.html</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- APPLICATION LOGIC -->
+  <script>
+    // --- DATA STATE ---
+    const defaultSkills = [
+      { id: 's1', name: 'Python 3 (Scripting & Logic)', category: 'code', level: 82, tag: 'Core Language', detail: 'Data automation, CLI tools, attendance & margin calculators' },
+      { id: 's2', name: 'Microsoft Excel (Advanced Modeling)', category: 'analytics', level: 90, tag: 'Spreadsheet BI', detail: 'Pivot tables, dynamic formulas, financial & nutrition tracking' },
+      { id: 's3', name: 'Power BI & Data Visualization', category: 'analytics', level: 85, tag: 'DADV Specialization', detail: 'Interactive KPI dashboards, DAX metrics, visual storytelling' },
+      { id: 's4', name: 'Business & Commerce Analytics', category: 'analytics', level: 88, tag: '86.7% CBSE XII', detail: 'Retail margin analysis, inventory turnover, consumer insights' },
+      { id: 's5', name: 'HTML5, Tailwind CSS & Git/Vercel', category: 'code', level: 78, tag: 'Web Deployment', detail: 'Responsive web interfaces, GitHub version control, Vercel & GSC' },
+      { id: 's6', name: 'Photography & Visual Framing', category: 'media', level: 92, tag: 'JU Socials', detail: 'Candid campus stills, automotive night shoots, monochrome grading' },
+      { id: 's7', name: 'Video Editing & Reels Production', category: 'media', level: 89, tag: 'Digital Media', detail: 'High-retention event recaps, beat-synced transitions, festival reels' },
+      { id: 's8', name: 'Event Organization & Team Ops', category: 'media', level: 86, tag: 'Leadership', detail: 'Campus coordination, crowd coverage, stakeholder communication' }
+    ];
+
+    const defaultProjects = [
+      {
+        id: 'p1',
+        title: 'Family Business Inventory & Margin Analyzer',
+        category: 'python',
+        categoryLabel: 'Python & Code',
+        impact: '+18% Stock Visibility & Margin Tracking',
+        tags: ['Python 3', 'CSV Automation', 'Retail Analytics'],
+        summary: 'Automated Python toolkit designed to modernize family business ledger entries, compute product-level gross margins, and flag slow-moving inventory.',
+        code: `# Family Business Margin & Reorder Alert Engine
+def analyze_inventory(sku_records):
+    alerts = []
+    for item in sku_records:
+        margin_pct = ((item['sell_price'] - item['cost_price']) / item['sell_price']) * 100
+        if item['stock_qty'] <= item['reorder_level']:
+            alerts.append((item['sku'], round(margin_pct, 1), 'REORDER_NOW'))
+    return sorted(alerts, key=lambda x: x[1], reverse=True)`
+      },
+      {
+        id: 'p2',
+        title: 'JECRC 75% Attendance & Leave Optimizer',
+        category: 'python',
+        categoryLabel: 'Python & Code',
+        impact: 'Zero-Penalty Leave Planning Across Courses',
+        tags: ['Python', 'JavaScript', 'Student Utility'],
+        summary: 'Interactive modeling utility built for JECRC University students to compute allowable absences and recovery streaks to stay above the mandatory 75% attendance cutoff.',
+        code: `import math
+def max_allowed_leaves(total_classes, attended, upcoming_classes, threshold=0.75):
+    final_total = total_classes + upcoming_classes
+    min_required = math.ceil(final_total * threshold)
+    must_attend = max(0, min_required - attended)
+    return max(0, upcoming_classes - must_attend)`
+      },
+      {
+        id: 'p3',
+        title: 'Heritage Retail & Campus Brand Visual Marketing Study',
+        category: 'bi',
+        categoryLabel: 'Power BI & Excel',
+        impact: 'Data-Backed Visual Positioning Framework',
+        tags: ['Power BI', 'Market Research', 'Jaipur Retail'],
+        summary: 'Analytical study evaluating how data-driven visual content and minimalist branding improve social engagement for Jaipur heritage retail and campus beverage brands.',
+        code: `// Power BI DAX Measure: Engagement Conversion Velocity
+Engagement Rate % = 
+DIVIDE(
+    SUM('CampaignMetrics'[Interactions]) + SUM('CampaignMetrics'[Saves]),
+    SUM('CampaignMetrics'[Reach]),
+    0
+) * 100`
+      },
+      {
+        id: 'p4',
+        title: 'High-Protein Vegetarian Nutrition & Macro Tracker',
+        category: 'bi',
+        categoryLabel: 'Power BI & Excel',
+        impact: 'Daily Macro & Cost-Per-Gram Optimization',
+        tags: ['Excel Modeling', 'Data Viz', 'Personal Analytics'],
+        summary: 'Dynamic spreadsheet and dashboard tracking daily calorie and protein targets across vegetarian whole-food sources (soya chunks, paneer, sattu, legumes, dairy) without whey.',
+        code: `=LET(
+  protein_g, SUMIFS(MealLog[Protein], MealLog[Date], TODAY()),
+  kcal_total, SUMIFS(MealLog[Calories], MealLog[Date], TODAY()),
+  protein_density, ROUND((protein_g * 4 / kcal_total) * 100, 1),
+  "Protein: " & protein_g & "g (" & protein_density & "% of kcal)"
+)`
+      },
+      {
+        id: 'p5',
+        title: 'JU Socials — Campus Culture & Crowd Visual Archive',
+        category: 'creative',
+        categoryLabel: 'Visual & Media',
+        impact: 'High-Reach Campus Event Documentation',
+        tags: ['Photography', 'JU Socials', 'Visual Storytelling'],
+        summary: 'Curated series of candid student stills, orientation highlights, and crowd energy coverage produced as a Media Team Contributor for JECRC University Socials.',
+        code: `Camera & Post-Production Workflow:
+1. Capture: Fast-shutter candid framing in dynamic crowd lighting
+2. Selection: High-emotion keyframes & monochrome contrast checks
+3. Grade: Minimalist true-black shadows + crisp highlight roll-off`
+      },
+      {
+        id: 'p6',
+        title: 'Jaipur Night Rides & Automotive Motion Series',
+        category: 'creative',
+        categoryLabel: 'Visual & Media',
+        impact: 'Cinematic Reels & Low-Light Stills',
+        tags: ['Video Editing', 'Automotive', 'Jaipur'],
+        summary: 'Low-light photography and beat-synced reel edits featuring the black Jawa 42 Bobber and late-night architectural backdrops around Jal Mahal and Man Sagar Lake.',
+        code: `Reel Timeline Spec:
+- Aspect Ratio: 9:16 Vertical (1080x1920 @ 60fps)
+- Audio Sync: Transient markers aligned to exhaust & beat drops
+-LUT Profile: High-Contrast Monochrome / Desaturated Gold`
+      }
+    ];
+
+    let activeSkillFilter = 'all';
+    let activeProjectCategory = 'all';
+    let projectsList = [...defaultProjects];
+    let skillsChartInstance = null;
+    let currentChartType = 'radar';
+    let currentModalSnippet = '';
+    let sentMessagesLog = [];
+
+    // --- TOAST HELPER (No alert/confirm/prompt) ---
+    function showToast(message) {
+      const container = document.getElementById('toastContainer');
+      if (!container) return;
+      const toast = document.createElement('div');
+      toast.className = 'px-4 py-2.5 rounded-xl btn-accent font-mono text-xs font-semibold shadow-lg transition-all duration-300 pointer-events-auto';
+      toast.textContent = message;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => toast.remove(), 300);
+      }, 2600);
+    }
+
+    // --- CLIPBOARD HELPER ---
+    function copyText(text, successMsg) {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(() => {
+          showToast(successMsg || 'Copied to clipboard!');
+        }).catch(() => fallbackCopy(text, successMsg));
+      } else {
+        fallbackCopy(text, successMsg);
+      }
+    }
+
+    function fallbackCopy(text, successMsg) {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      try {
+        document.execCommand('copy');
+        showToast(successMsg || 'Copied to clipboard!');
+      } catch (err) {
+        showToast('Copy action completed.');
+      }
+      document.body.removeChild(ta);
+    }
+
+    // --- THEME SWITCHER ---
+    function setTheme(mode) {
+      document.body.classList.remove('theme-light', 'theme-emerald');
+      if (mode === 'light') document.body.classList.add('theme-light');
+      if (mode === 'emerald') document.body.classList.add('theme-emerald');
+
+      const btnDark = document.getElementById('themeBtnDark');
+      const btnLight = document.getElementById('themeBtnLight');
+      const btnEmerald = document.getElementById('themeBtnEmerald');
+      [btnDark, btnLight, btnEmerald].forEach(btn => {
+        if (!btn) return;
+        btn.className = 'px-2.5 py-1 rounded-md transition text-muted hover:opacity-80';
+      });
+      const activeBtn = mode === 'light' ? btnLight : mode === 'emerald' ? btnEmerald : btnDark;
+      if (activeBtn) {
+        activeBtn.className = 'px-2.5 py-1 rounded-md transition font-medium btn-accent';
+      }
+
+      try {
+        localStorage.setItem('anmol_portfolio_theme', mode);
+      } catch (e) {}
+
+      renderSkillsChart(currentChartType);
+    }
+
+    // --- MOBILE MENU ---
+    function toggleMobileMenu() {
+      const menu = document.getElementById('mobileMenu');
+      if (menu) menu.classList.toggle('hidden');
+    }
+    function closeMobileMenu() {
+      const menu = document.getElementById('mobileMenu');
+      if (menu) menu.classList.add('hidden');
+    }
+
+    // --- INTERACTIVE TERMINAL ---
+    const terminalCommands = {
+      help: () => `Available commands:
+  • whoami     — Identity & academic profile
+  • skills     — Technical & creative stack
+  • education  — University & CBSE credentials
+  • projects   — Summary of featured builds
+  • hobbies    — Off-screen passions & interests
+  • contact    — Direct email & phone
+  • clear      — Clear terminal output`,
+      whoami: () => `Anmol Soni — Coder, Data Analytics Student & Visual Creator based in Jaipur, Rajasthan.
+Pursuing BBA (Data Analytics & Data Visualization) at JECRC University (Samatrix Program, Section D, ID: 26bban0864).`,
+      skills: () => `[CODE & DATA] Python 3, Microsoft Excel (Advanced), Power BI, Data Visualization, HTML/Tailwind, Git/Vercel
+[CREATIVE] Photography (JU Socials), Reels/Video Editing, Minimalist Monochrome Branding`,
+      education: () => `• BBA (DADV) — Jaipur School of Business, JECRC University (2026–Present)
+• Class XII CBSE (Commerce Stream) — Achieved 86.7% Aggregate`,
+      projects: () => `1. Family Business Inventory & Margin Analyzer (Python)
+2. JECRC 75% Attendance & Leave Optimizer (Python + JS)
+3. Heritage Retail & Campus Brand Visual Marketing Study (Power BI)
+4. High-Protein Vegetarian Macro Tracker (Excel + BI)
+5. JU Socials Campus Visual Archive & Night Ride Reels`,
+      hobbies: () => `Motorcycling & cycling around Jaipur (Jal Mahal night rides), Formula 1 (Leclerc & Hamilton), T20 Cricket, Valorant, Cinema, and Desi Hip-Hop.`,
+      contact: () => `Email: anmolsoni8875@gmail.com | Phone: +91 9588959037 | Location: Jaipur, Rajasthan`
+    };
+
+    function runTerminalCommand(rawCmd) {
+      const cmd = (rawCmd || '').trim().toLowerCase();
+      const output = document.getElementById('terminalOutput');
+      if (!output) return;
+
+      if (cmd === 'clear') {
+        output.innerHTML = '<div class="text-muted">// Terminal cleared. Type <span class="underline">help</span> for commands.</div>';
+        return;
+      }
+
+      const cmdLine = document.createElement('div');
+      cmdLine.innerHTML = `<span class="text-emerald-400">anmol@portfolio:~$</span> <span>${escapeHtml(rawCmd)}</span>`;
+      output.appendChild(cmdLine);
+
+      const responseDiv = document.createElement('div');
+      responseDiv.className = 'pl-3 border-l-2 border-subtle text-xs whitespace-pre-line text-muted';
+      if (terminalCommands[cmd]) {
+        responseDiv.textContent = terminalCommands[cmd]();
+      } else {
+        responseDiv.textContent = `Command not recognized: "${rawCmd}". Type "help" to list available commands.`;
+      }
+      output.appendChild(responseDiv);
+      output.scrollTop = output.scrollHeight;
+    }
+
+    function handleTerminalSubmit(e) {
+      e.preventDefault();
+      const input = document.getElementById('terminalInput');
+      if (!input || !input.value.trim()) return;
+      runTerminalCommand(input.value);
+      input.value = '';
+    }
+
+    function escapeHtml(str) {
+      return String(str).replace(/[&<>"']/g, s => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+      }[s]));
+    }
+
+    // --- SKILLS RENDER & CHART ---
+    function filterSkills(category) {
+      activeSkillFilter = category;
+      document.querySelectorAll('[data-skill-tab]').forEach(btn => {
+        const isMatch = btn.getAttribute('data-skill-tab') === category;
+        btn.className = isMatch
+          ? 'px-3 py-1.5 rounded-lg btn-accent font-medium transition'
+          : 'px-3 py-1.5 rounded-lg surface-card text-muted hover:opacity-85 transition';
+      });
+      renderSkillsGrid();
+    }
+
+    function renderSkillsGrid() {
+      const grid = document.getElementById('skillsGrid');
+      if (!grid) return;
+      const filtered = activeSkillFilter === 'all'
+        ? defaultSkills
+        : defaultSkills.filter(s => s.category === activeSkillFilter);
+
+      grid.innerHTML = filtered.map(skill => `
+        <div class="surface-card rounded-xl p-4 space-y-2.5">
+          <div class="flex items-center justify-between gap-2">
+            <span class="font-bold text-sm">${escapeHtml(skill.name)}</span>
+            <span class="font-mono text-xs px-2 py-0.5 rounded badge-surface">${skill.level}%</span>
+          </div>
+          <p class="text-xs text-muted">${escapeHtml(skill.detail)}</p>
+          <div class="w-full h-1.5 rounded-full surface-secondary overflow-hidden">
+            <div class="h-full btn-accent rounded-full transition-all duration-500" style="width: ${skill.level}%"></div>
+          </div>
+          <div class="flex items-center justify-between text-[11px] font-mono text-muted">
+            <span>${escapeHtml(skill.tag)}</span>
+            <span>Verified Stack</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function switchSkillChart(type) {
+      currentChartType = type;
+      const rBtn = document.getElementById('chartTypeRadar');
+      const bBtn = document.getElementById('chartTypeBar');
+      if (rBtn && bBtn) {
+        rBtn.className = type === 'radar' ? 'px-2.5 py-1 rounded btn-accent' : 'px-2.5 py-1 rounded text-muted';
+        bBtn.className = type === 'bar' ? 'px-2.5 py-1 rounded btn-accent' : 'px-2.5 py-1 rounded text-muted';
+      }
+      renderSkillsChart(type);
+    }
+
+    function renderSkillsChart(type) {
+      const canvas = document.getElementById('skillsChartCanvas');
+      if (!canvas || typeof Chart === 'undefined') return;
+      if (skillsChartInstance) {
+        skillsChartInstance.destroy();
+      }
+
+      const isLight = document.body.classList.contains('theme-light');
+      const isEmerald = document.body.classList.contains('theme-emerald');
+      const primaryStroke = isEmerald ? '#10b981' : isLight ? '#09090b' : '#fafafa';
+      const fillBg = isEmerald ? 'rgba(16, 185, 129, 0.2)' : isLight ? 'rgba(9, 9, 11, 0.12)' : 'rgba(250, 250, 250, 0.15)';
+      const gridColor = isLight ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.12)';
+      const labelColor = isLight ? '#3f3f46' : '#a1a1aa';
+
+      const labels = ['Python Code', 'Excel Modeling', 'Power BI / DADV', 'Commerce Strategy', 'Photography', 'Video & Reels'];
+      const values = [82, 90, 85, 88, 92, 89];
+
+      skillsChartInstance = new Chart(canvas, {
+        type: type,
+        data: {
+          labels,
+          datasets: [{
+            label: 'Proficiency Index',
+            data: values,
+            backgroundColor: fillBg,
+            borderColor: primaryStroke,
+            borderWidth: 2,
+            pointBackgroundColor: primaryStroke,
+            borderRadius: type === 'bar' ? 6 : 0
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false }
+          },
+          scales: type === 'radar' ? {
+            r: {
+              min: 50,
+              max: 100,
+              ticks: { display: false },
+              grid: { color: gridColor },
+              angleLines: { color: gridColor },
+              pointLabels: { color: labelColor, font: { family: 'JetBrains Mono', size: 11 } }
+            }
+          } : {
+            x: {
+              grid: { display: false },
+              ticks: { color: labelColor, font: { family: 'JetBrains Mono', size: 10 } }
+            },
+            y: {
+              min: 50,
+              max: 100,
+              grid: { color: gridColor },
+              ticks: { color: labelColor, font: { family: 'JetBrains Mono', size: 10 } }
+            }
+          }
+        }
+      });
+    }
+
+    // --- PROJECTS FILTER & MODAL ---
+    function setProjectCategory(cat) {
+      activeProjectCategory = cat;
+      document.querySelectorAll('[data-proj-tab]').forEach(btn => {
+        const isMatch = btn.getAttribute('data-proj-tab') === cat;
+        btn.className = isMatch
+          ? 'px-3 py-1.5 rounded-lg btn-accent font-medium transition'
+          : 'px-3 py-1.5 rounded-lg surface-card text-muted hover:opacity-85 transition';
+      });
+      renderProjects();
+    }
+
+    function renderProjects() {
+      const grid = document.getElementById('projectsGrid');
+      const searchInput = document.getElementById('projectSearchInput');
+      const query = (searchInput ? searchInput.value : '').trim().toLowerCase();
+      if (!grid) return;
+
+      const filtered = projectsList.filter(p => {
+        const matchesCat = activeProjectCategory === 'all' || p.category === activeProjectCategory;
+        const matchesQuery = !query ||
+          p.title.toLowerCase().includes(query) ||
+          p.summary.toLowerCase().includes(query) ||
+          p.tags.some(t => t.toLowerCase().includes(query));
+        return matchesCat && matchesQuery;
+      });
+
+      const countEl = document.getElementById('metricProjectCount');
+      if (countEl) countEl.textContent = String(projectsList.length);
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `<div class="col-span-full surface-card rounded-2xl p-8 text-center font-mono text-sm text-muted">No matching projects found. Try clearing the search filter.</div>`;
+        return;
+      }
+
+      grid.innerHTML = filtered.map(proj => `
+        <article class="surface-card rounded-2xl p-6 flex flex-col justify-between space-y-5 hover:border-zinc-500 transition">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between gap-2">
+              <span class="font-mono text-xs px-2.5 py-1 rounded badge-surface">${escapeHtml(proj.categoryLabel)}</span>
+              <span class="font-mono text-[11px] text-muted">${escapeHtml(proj.impact)}</span>
+            </div>
+            <h3 class="text-lg font-bold leading-snug">${escapeHtml(proj.title)}</h3>
+            <p class="text-xs sm:text-sm text-muted leading-relaxed">${escapeHtml(proj.summary)}</p>
+          </div>
+
+          <div class="space-y-4 pt-2">
+            <div class="flex flex-wrap gap-1.5 font-mono text-[11px]">
+              ${proj.tags.map(t => `<span class="px-2 py-0.5 rounded surface-secondary border border-subtle">${escapeHtml(t)}</span>`).join('')}
+            </div>
+
+            <button type="button" onclick="openProjectModal('${proj.id}')" class="w-full py-2.5 px-4 rounded-xl surface-secondary border border-subtle font-mono text-xs font-semibold hover:opacity-85 transition flex items-center justify-between">
+              <span>Inspect Code &amp; Case Study</span>
+              <span>&rarr;</span>
+            </button>
+          </div>
+        </article>
+      `).join('');
+    }
+
+    function openProjectModal(projId) {
+      const proj = projectsList.find(p => p.id === projId);
+      if (!proj) return;
+      document.getElementById('modalProjCategory').textContent = proj.categoryLabel;
+      document.getElementById('modalProjTitle').textContent = proj.title;
+      document.getElementById('modalProjDesc').textContent = proj.summary;
+      document.getElementById('modalProjImpact').textContent = proj.impact;
+      document.getElementById('modalProjStack').textContent = proj.tags.join(' · ');
+      document.getElementById('modalProjCode').textContent = proj.code;
+      currentModalSnippet = proj.code;
+
+      const modal = document.getElementById('projectModal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeProjectModal() {
+      const modal = document.getElementById('projectModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function copyModalSnippet() {
+      copyText(currentModalSnippet, 'Project code snippet copied!');
+    }
+
+    // --- LIVE 75% ATTENDANCE SANDBOX ---
+    function loadAttendancePreset(total, present, upcoming) {
+      document.getElementById('attTotalInput').value = total;
+      document.getElementById('attPresentInput').value = present;
+      document.getElementById('attUpcomingInput').value = upcoming;
+      updateAttendanceSandbox();
+      showToast(`Loaded preset: ${present}/${total} classes (+${upcoming} upcoming)`);
+    }
+
+    function updateAttendanceSandbox() {
+      const rawTotal = parseInt(document.getElementById('attTotalInput').value, 10);
+      const rawPresent = parseInt(document.getElementById('attPresentInput').value, 10);
+      const rawUpcoming = parseInt(document.getElementById('attUpcomingInput').value, 10);
+
+      const total = isNaN(rawTotal) || rawTotal < 1 ? 1 : rawTotal;
+      const present = isNaN(rawPresent) || rawPresent < 0 ? 0 : Math.min(rawPresent, total);
+      const upcoming = isNaN(rawUpcoming) || rawUpcoming < 0 ? 0 : Math.min(rawUpcoming, 60);
+
+      const currentPct = (present / total) * 100;
+      const finalTotal = total + upcoming;
+      const minRequiredPresent = Math.ceil(finalTotal * 0.75);
+      const neededInWindow = Math.max(0, minRequiredPresent - present);
+      const allowedLeaves = Math.max(0, upcoming - neededInWindow);
+      const afterOneLeavePct = (present / (total + 1)) * 100;
+
+      document.getElementById('attCurrentPct').textContent = `${currentPct.toFixed(2)}%`;
+      const statusBadge = document.getElementById('attStatusBadge');
+      if (currentPct >= 75) {
+        statusBadge.textContent = 'SAFE (≥ 75% Threshold)';
+        statusBadge.className = 'text-xs font-mono text-emerald-400 mt-1';
+      } else {
+        statusBadge.textContent = 'BELOW 75% — Recovery Needed';
+        statusBadge.className = 'text-xs font-mono text-rose-400 mt-1';
+      }
+
+      document.getElementById('attAllowedLeaves').textContent = `${allowedLeaves} of ${upcoming}`;
+      document.getElementById('attLeaveNote').textContent = neededInWindow > upcoming
+        ? `Need ${neededInWindow} classes (exceeds window)`
+        : `Attend at least ${neededInWindow} of next ${upcoming}`;
+      document.getElementById('attAfterOneLeave').textContent = `${afterOneLeavePct.toFixed(2)}%`;
+
+      // Update trace
+      const trace = document.getElementById('pythonTraceOutput');
+      if (trace) {
+        trace.innerHTML = `&gt;&gt;&gt; evaluate_attendance(total=${total}, present=${present}, upcoming=${upcoming})<br/>{'current_pct': ${currentPct.toFixed(2)}, 'final_total': ${finalTotal}, 'needed_in_window': ${neededInWindow}, 'allowed_leaves': ${allowedLeaves}}`;
+      }
+
+      // Build scenario rows
+      const tbody = document.getElementById('attScenarioTableBody');
+      if (tbody) {
+        const maxRows = Math.min(upcoming, 5);
+        let rowsHtml = '';
+        for (let leaves = 0; leaves <= maxRows; leaves++) {
+          const attendedInWindow = upcoming - leaves;
+          const newPresent = present + attendedInWindow;
+          const pct = (newPresent / finalTotal) * 100;
+          const isSafe = pct >= 75;
+          rowsHtml += `
+            <tr>
+              <td class="py-2 pr-3 font-semibold">${leaves} leave${leaves === 1 ? '' : 's'}</td>
+              <td class="py-2 px-3">+${attendedInWindow} attended</td>
+              <td class="py-2 px-3">${newPresent}/${finalTotal}</td>
+              <td class="py-2 px-3 font-bold">${pct.toFixed(2)}%</td>
+              <td class="py-2 pl-3 ${isSafe ? 'text-emerald-400' : 'text-rose-400'}">${isSafe ? 'ELIGIBLE (≥75%)' : 'SHORTFALL (<75%)'}</td>
+            </tr>
+          `;
+        }
+        tbody.innerHTML = rowsHtml;
+      }
+    }
+
+    function copyPythonSnippet() {
+      const code = document.getElementById('pythonCodeBlock').innerText;
+      copyText(code, 'Python attendance engine copied!');
+    }
+
+    // --- CONTACT FORM HANDLER ---
+    function handleContactSubmit(e) {
+      e.preventDefault();
+      const name = document.getElementById('senderName').value.trim();
+      const email = document.getElementById('senderEmail').value.trim();
+      const topic = document.getElementById('inquiryTopic').value;
+      const message = document.getElementById('senderMessage').value.trim();
+      if (!name || !email || !message) return;
+
+      const entry = {
+        name,
+        email,
+        topic,
+        message,
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      };
+      sentMessagesLog.unshift(entry);
+
+      const box = document.getElementById('loggedMessagesBox');
+      const list = document.getElementById('loggedMessagesList');
+      if (box && list) {
+        box.classList.remove('hidden');
+        list.innerHTML = sentMessagesLog.map(item => `
+          <div class="p-3 rounded-lg surface-secondary border border-subtle flex flex-col gap-1">
+            <div class="flex items-center justify-between">
+              <span class="font-bold">${escapeHtml(item.name)} (${escapeHtml(item.email)})</span>
+              <span class="text-muted">${escapeHtml(item.time)}</span>
+            </div>
+            <div class="text-emerald-400">[${escapeHtml(item.topic)}]</div>
+            <div class="text-muted">${escapeHtml(item.message)}</div>
+          </div>
+        `).join('');
+      }
+
+      document.getElementById('contactForm').reset();
+      showToast('Inquiry logged! Ready to connect with Anmol Soni.');
+    }
+
+    // --- EXPORT RESUME SUMMARY (.TXT) ---
+    function downloadResumeSummary() {
+      const cvText = [
+        'ANMOL SONI — PORTFOLIO & CV SUMMARY',
+        '===================================',
+        'Location: Jaipur, Rajasthan, India',
+        'Email: anmolsoni8875@gmail.com | Phone: +91 9588959037',
+        '',
+        'EDUCATION',
+        '---------',
+        '• BBA in Data Analytics & Data Visualization (Samatrix Program, Section D)',
+        '  Jaipur School of Business, JECRC University (Enrollment ID: 26bban0864) | 2026–Present',
+        '• CBSE Class XII (Commerce Stream) — Score: 86.7%',
+        '',
+        'TECHNICAL & CREATIVE STACK',
+        '--------------------------',
+        '• Programming & Web: Python 3, HTML5, Tailwind CSS, GitHub, Vercel, Google Search Console',
+        '• Data & BI: Microsoft Excel (Advanced Modeling), Power BI, Data Visualization, KPI Dashboards',
+        '• Creative Media: Photography (JU Socials Media Team), Video/Reels Editing, Minimalist Branding',
+        '',
+        'FEATURED PROJECTS',
+        '-----------------',
+        ...projectsList.map((p, idx) => `${idx + 1}. ${p.title} [${p.categoryLabel}] — ${p.impact}\n   ${p.summary}`)
+      ].join('\n');
+
+      const blob = new Blob([cvText], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'Anmol_Soni_CV_Summary.txt';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast('Downloaded Anmol_Soni_CV_Summary.txt');
+    }
+
+    // --- CUSTOMIZER & CODE EXPORT MODAL ---
+    function openCustomizerModal() {
+      const modal = document.getElementById('customizerModal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeCustomizerModal() {
+      const modal = document.getElementById('customizerModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function saveProfileEdits() {
+      const nameVal = document.getElementById('editNameInput').value.trim() || 'Anmol Soni';
+      const headlineVal = document.getElementById('editHeadlineInput').value.trim();
+      const githubVal = document.getElementById('editGithubInput').value.trim() || 'https://github.com';
+
+      document.getElementById('navBrandName').textContent = nameVal.toUpperCase();
+      document.getElementById('heroNameInline').textContent = nameVal.toUpperCase();
+      if (headlineVal) document.getElementById('heroHeadline').textContent = headlineVal;
+      document.getElementById('socialGithubLink').setAttribute('href', githubVal);
+
+      try {
+        localStorage.setItem('anmol_portfolio_profile', JSON.stringify({
+          name: nameVal,
+          headline: headlineVal,
+          github: githubVal
+        }));
+      } catch (e) {}
+
+      showToast('Live portfolio profile updated!');
+    }
+
+    function resetProfileEdits() {
+      document.getElementById('editNameInput').value = 'Anmol Soni';
+      document.getElementById('editHeadlineInput').value = 'Turning raw data, clean code & visual craft into business impact.';
+      document.getElementById('editGithubInput').value = 'https://github.com/anmolsoni';
+      saveProfileEdits();
+    }
+
+    function addCustomProject() {
+      const title = document.getElementById('newProjTitle').value.trim();
+      const category = document.getElementById('newProjCat').value;
+      const tagsRaw = document.getElementById('newProjTags').value.trim();
+      const summary = document.getElementById('newProjSummary').value.trim();
+
+      if (!title || !summary) {
+        showToast('Please enter both a Project Title and Summary.');
+        return;
+      }
+
+      const categoryLabel = category === 'python' ? 'Python & Code' : category === 'bi' ? 'Power BI & Excel' : 'Visual & Media';
+      const tags = tagsRaw ? tagsRaw.split(',').map(s => s.trim()).filter(Boolean) : ['Custom Build'];
+
+      projectsList.unshift({
+        id: 'custom_' + Date.now(),
+        title,
+        category,
+        categoryLabel,
+        impact: 'Custom Portfolio Addition',
+        tags,
+        summary,
+        code: `# ${title}\n# Added via Portfolio Studio\ndef run_project():\n    print("Executing ${title}")`
+      });
+
+      document.getElementById('newProjTitle').value = '';
+      document.getElementById('newProjTags').value = '';
+      document.getElementById('newProjSummary').value = '';
+      renderProjects();
+      showToast(`Added "${title}" to your portfolio!`);
+    }
+
+    function copyFullHtmlSource() {
+      const fullHtml = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+      copyText(fullHtml, 'Full standalone HTML source copied!');
+    }
+
+    function downloadFullHtmlSource() {
+      const fullHtml = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+      const blob = new Blob([fullHtml], { type: 'text/html;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'index.html';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast('Downloaded deploy-ready index.html!');
+    }
+
+    // --- INITIALIZE ON LOAD ---
+    window.addEventListener('DOMContentLoaded', () => {
+      try {
+        const savedTheme = localStorage.getItem('anmol_portfolio_theme');
+        if (savedTheme) setTheme(savedTheme);
+        const savedProfile = JSON.parse(localStorage.getItem('anmol_portfolio_profile') || 'null');
+        if (savedProfile) {
+          if (savedProfile.name) {
+            document.getElementById('navBrandName').textContent = savedProfile.name.toUpperCase();
+            document.getElementById('heroNameInline').textContent = savedProfile.name.toUpperCase();
+            document.getElementById('editNameInput').value = savedProfile.name;
+          }
+          if (savedProfile.headline) {
+            document.getElementById('heroHeadline').textContent = savedProfile.headline;
+            document.getElementById('editHeadlineInput').value = savedProfile.headline;
+          }
+          if (savedProfile.github) {
+            document.getElementById('socialGithubLink').setAttribute('href', savedProfile.github);
+            document.getElementById('editGithubInput').value = savedProfile.github;
+          }
+        }
+      } catch (e) {}
+
+      renderSkillsGrid();
+      renderProjects();
+      updateAttendanceSandbox();
+      renderSkillsChart('radar');
+    });
+  </script>
+
+</body></html>
